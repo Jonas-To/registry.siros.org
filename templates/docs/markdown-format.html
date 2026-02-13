@@ -1,0 +1,335 @@
+{{> header}}
+        <div class="container">
+            <nav class="breadcrumb">
+                <a href="/">Home</a>
+                <span class="separator">/</span>
+                <span class="current">Markdown Format</span>
+            </nav>
+
+            <article class="docs-page">
+                <h1>VCTM Markdown Format</h1>
+                <p class="lead">
+                    Define Verifiable Credential Type Metadata using familiar Markdown syntax with 
+                    support for display names, multiple languages, and rich rendering options.
+                </p>
+
+                <section class="docs-section">
+                    <h2>Basic Structure</h2>
+                    <p>
+                        A VCTM markdown file consists of YAML front matter followed by structured 
+                        content sections:
+                    </p>
+                    <pre><code>---
+vct: https://example.com/credentials/identity
+background_color: "#1a365d"
+text_color: "#ffffff"
+---
+
+# Identity Credential
+
+A verifiable credential for identity verification.
+
+## Claims
+
+- `given_name` "Given Name" (string): The given name [mandatory]
+- `family_name` (string): The family name [mandatory]
+
+## Images
+
+![Logo](images/logo.png)</code></pre>
+                </section>
+
+                <section class="docs-section">
+                    <h2>Front Matter</h2>
+                    <p>
+                        The optional YAML front matter at the top of your file configures credential-level 
+                        properties:
+                    </p>
+                    <table class="docs-table">
+                        <thead>
+                            <tr>
+                                <th>Property</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><code>vct</code></td>
+                                <td>The Verifiable Credential Type identifier (URI)</td>
+                            </tr>
+                            <tr>
+                                <td><code>background_color</code></td>
+                                <td>Background color for credential display (hex, e.g., "#1a365d")</td>
+                            </tr>
+                            <tr>
+                                <td><code>text_color</code></td>
+                                <td>Text color for credential display (hex)</td>
+                            </tr>
+                            <tr>
+                                <td><code>extends</code></td>
+                                <td>URI of another VCT that this type extends</td>
+                            </tr>
+                            <tr>
+                                <td><code>extends#integrity</code></td>
+                                <td>SRI integrity hash for the extended type metadata</td>
+                            </tr>
+                            <tr>
+                                <td><code>background_image</code></td>
+                                <td>URI for a background image</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </section>
+
+                <section class="docs-section">
+                    <h2>Title and Description</h2>
+                    <p>
+                        The first <code>H1</code> heading becomes the credential name, and the first 
+                        paragraph after it becomes the description:
+                    </p>
+                    <pre><code># Student ID Credential
+
+A digital student identification credential issued by educational institutions.</code></pre>
+                </section>
+
+                <section class="docs-section">
+                    <h2>Claims</h2>
+                    <p>
+                        Claims are defined as list items under a <code>## Claims</code> section using 
+                        this format:
+                    </p>
+                    <pre><code>- `claim_name` "Display Name" (type): Description [flags]</code></pre>
+                    
+                    <h3>Claim Components</h3>
+                    <table class="docs-table">
+                        <thead>
+                            <tr>
+                                <th>Component</th>
+                                <th>Required</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><code>`claim_name`</code></td>
+                                <td>Yes</td>
+                                <td>The claim identifier in backticks</td>
+                            </tr>
+                            <tr>
+                                <td><code>"Display Name"</code></td>
+                                <td>No</td>
+                                <td>Human-readable label shown to users</td>
+                            </tr>
+                            <tr>
+                                <td><code>(type)</code></td>
+                                <td>No</td>
+                                <td>Value type: string, date, number, object, image (default: string)</td>
+                            </tr>
+                            <tr>
+                                <td><code>Description</code></td>
+                                <td>No</td>
+                                <td>Human-readable description of the claim</td>
+                            </tr>
+                            <tr>
+                                <td><code>[mandatory]</code></td>
+                                <td>No</td>
+                                <td>Mark the claim as required</td>
+                            </tr>
+                            <tr>
+                                <td><code>[sd=always|never]</code></td>
+                                <td>No</td>
+                                <td>Selective disclosure setting</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <h3>Examples</h3>
+                    <pre><code># Simple claim with type
+- `email` (string): The holder's email address
+
+# Claim with display name
+- `given_name` "Given Name" (string): The first name of the holder
+
+# Mandatory claim with selective disclosure
+- `personal_id` "Personal ID" (string): Unique identifier [mandatory] [sd=always]
+
+# Claim with complex type
+- `address` "Address" (object): Current residential address [sd=always]</code></pre>
+                </section>
+
+                <section class="docs-section">
+                    <h2>Localization</h2>
+                    <p>
+                        Add multi-language support by nesting locale-specific entries under claims:
+                    </p>
+                    <pre><code>- `given_name` "Given Name" (string): The given name [mandatory]
+  - de-DE: "Vorname" - Der Vorname des Inhabers
+  - sv: "Förnamn" - Innehavarens förnamn
+  - fr: "Prénom" - Le prénom du titulaire</code></pre>
+                    
+                    <h3>Locale Format</h3>
+                    <pre><code>- locale: "Label" - Description</code></pre>
+                    <p>
+                        The locale code follows <a href="https://www.rfc-editor.org/rfc/bcp47" target="_blank">BCP 47</a> 
+                        format (e.g., <code>en-US</code>, <code>de-DE</code>, <code>sv</code>, <code>fr-CA</code>).
+                    </p>
+
+                    <h3>Full Localized Example</h3>
+                    <pre><code>## Claims
+
+- `given_name` "Given Name" (string): The given name of the holder [mandatory]
+  - de-DE: "Vorname" - Der Vorname des Inhabers
+  - sv: "Förnamn" - Innehavarens förnamn
+- `family_name` "Family Name" (string): The family name of the holder [mandatory]
+  - de-DE: "Familienname" - Der Familienname des Inhabers
+  - sv: "Efternamn" - Innehavarens efternamn
+- `birth_date` "Date of Birth" (date): Date of birth [sd=always]
+  - de-DE: "Geburtsdatum" - Geburtsdatum des Inhabers</code></pre>
+                </section>
+
+                <section class="docs-section">
+                    <h2>Images</h2>
+                    <p>
+                        Reference images using standard Markdown syntax. Images are processed specially:
+                    </p>
+                    <ul>
+                        <li>The <strong>first image</strong> becomes the credential logo</li>
+                        <li><strong>SVG images</strong> become SVG templates for dynamic rendering</li>
+                        <li>When using <code>--base-url</code>, images get full URLs and SRI integrity hashes</li>
+                    </ul>
+                    <pre><code>## Images
+
+![Credential Logo](images/logo.png)
+![Card Template](images/card-template.svg)</code></pre>
+
+                    <h3>SVG Templates</h3>
+                    <p>
+                        SVG files can include placeholders that wallets replace with actual claim values:
+                    </p>
+                    <pre><code>&lt;text id="given_name"&gt;{{given_name}}&lt;/text&gt;
+&lt;text id="issue_date"&gt;{{issue_date}}&lt;/text&gt;</code></pre>
+                </section>
+
+                <section class="docs-section">
+                    <h2>Complete Example</h2>
+                    <p>
+                        Here's a complete example combining all features:
+                    </p>
+                    <pre><code>---
+vct: https://university.edu/credentials/student-id
+background_color: "#003366"
+text_color: "#ffffff"
+---
+
+# Student ID Credential
+
+A digital student identification credential issued by accredited educational institutions.
+
+## Description
+
+This credential verifies the holder's enrollment status and basic identity information 
+at an educational institution. It supports selective disclosure to minimize data exposure.
+
+## Claims
+
+- `student_id` "Student ID" (string): Unique student identifier [mandatory]
+  - de-DE: "Matrikelnummer" - Die eindeutige Studierendennummer
+  - sv: "Studentnummer" - Unikt studentnummer
+- `given_name` "Given Name" (string): Legal first name [mandatory]
+  - de-DE: "Vorname" - Der Vorname
+  - sv: "Förnamn" - Förnamn
+- `family_name` "Family Name" (string): Legal family name [mandatory]
+  - de-DE: "Familienname" - Der Familienname
+  - sv: "Efternamn" - Efternamn
+- `enrollment_date` "Enrollment Date" (date): Date of initial enrollment
+- `expected_graduation` "Expected Graduation" (date): Expected graduation date [sd=always]
+- `program` "Program" (string): Enrolled academic program
+- `faculty` "Faculty" (string): Academic faculty or department
+- `photo` "Photo" (image): Student photograph [sd=always]
+
+## Images
+
+![University Logo](images/university-logo.svg)
+![Student Card](images/student-card-template.svg)
+
+## Issuer Requirements
+
+The issuer must be an accredited educational institution with a valid digital 
+credential issuing capability.</code></pre>
+                </section>
+
+                <section class="docs-section">
+                    <h2>Generated VCTM Output</h2>
+                    <p>
+                        The above Markdown generates a VCTM JSON document like this:
+                    </p>
+                    <pre><code>{
+  "vct": "https://university.edu/credentials/student-id",
+  "name": "Student ID Credential",
+  "description": "A digital student identification credential...",
+  "display": [{
+    "locale": "en-US",
+    "name": "Student ID Credential",
+    "description": "...",
+    "rendering": {
+      "simple": {
+        "logo": { "uri": "...", "uri#integrity": "sha256-..." },
+        "background_color": "#003366",
+        "text_color": "#ffffff"
+      },
+      "svg_templates": [...]
+    }
+  }],
+  "claims": [{
+    "path": ["student_id"],
+    "mandatory": true,
+    "display": [
+      { "locale": "en-US", "label": "Student ID", "description": "..." },
+      { "locale": "de-DE", "label": "Matrikelnummer", "description": "..." },
+      { "locale": "sv", "label": "Studentnummer", "description": "..." }
+    ]
+  }, ...]
+}</code></pre>
+                </section>
+
+                <section class="docs-section">
+                    <h2>Using mtcvctm</h2>
+                    <p>
+                        Generate VCTM files using the command line or GitHub Action:
+                    </p>
+
+                    <h3>Command Line</h3>
+                    <pre><code># Generate single file
+mtcvctm generate credential.md -o credential.vctm --base-url https://example.com
+
+# Batch process directory
+mtcvctm batch --input ./credentials --output ./vctm --base-url https://example.com</code></pre>
+
+                    <h3>GitHub Action</h3>
+                    <p>
+                        See the <a href="/docs/github-action.html">GitHub Action Setup</a> guide for 
+                        automated VCTM generation in your CI/CD pipeline.
+                    </p>
+                </section>
+
+                <section class="docs-section">
+                    <h2>References</h2>
+                    <ul>
+                        <li><a href="https://github.com/sirosfoundation/mtcvctm" target="_blank">mtcvctm on GitHub</a></li>
+                        <li><a href="https://datatracker.ietf.org/doc/html/draft-ietf-oauth-sd-jwt-vc" target="_blank">SD-JWT VC Specification</a></li>
+                        <li><a href="/docs/github-action.html">GitHub Action Setup</a></li>
+                        <li><a href="/docs/register.html">Register Your Credentials</a></li>
+                    </ul>
+                </section>
+
+                <section class="docs-section mtcvctm-etymology">
+                    <h2>About mtcvctm</h2>
+                    <p>
+                        <strong>mtcvctm</strong> is an anagram: <em>MarkDown To Create Verifiable Credential Type Metadata</em>. 
+                        The tool transforms human-readable documentation into machine-readable VCTM JSON while preserving 
+                        all the semantic information needed for credential interoperability.
+                    </p>
+                </section>
+            </article>
+        </div>
+{{> footer}}
