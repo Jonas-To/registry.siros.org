@@ -213,6 +213,8 @@ main {
     border-radius: var(--border-radius);
     padding: 1.5rem;
     box-shadow: var(--shadow);
+    display: flex;
+    flex-direction: column;
 }
 
 .vctm-card h3 {
@@ -231,6 +233,7 @@ main {
 .vctm-meta {
     margin: 0 0 1rem;
     font-size: 0.875rem;
+    flex-grow: 1;
 }
 
 .vctm-meta dt {
@@ -245,6 +248,7 @@ main {
 .vctm-actions {
     display: flex;
     gap: 0.75rem;
+    margin-top: auto;
 }
 
 /* Buttons */
