@@ -176,25 +176,28 @@ async function fetchRepoVCTMs(repo) {
     }
     
     // Fetch each VCTM file listed in the registry (in parallel)
-    const files = registry.vctms || [];
+    // Support both old format (vctms) and new format (credentials)
+    const files = registry.credentials || registry.vctms || [];
     
     const vctmPromises = files.map(async (file) => {
-        const vctmUrl = `${baseUrl}/${file.path}`;
+        // Support both path (old) and vctm_file (new) formats
+        const filePath = file.vctm_file || file.path;
+        const vctmUrl = `${baseUrl}/${filePath}`;
         const vctm = await fetchJSON(vctmUrl);
         
         if (vctm) {
-            console.log(`  Found: ${file.path}`);
+            console.log(`  Found: ${filePath}`);
             return {
-                name: file.name || path.basename(file.path, '.json'),
-                path: file.path,
+                name: file.name || path.basename(filePath, '.vctm'),
+                path: filePath,
                 vctm,
                 source: {
                     repo,
                     owner,
                     repoName: name,
                     url: `https://github.com/${repo}`,
-                    commit: registry.commit,
-                    timestamp: registry.timestamp
+                    commit: registry.repository?.commit || registry.commit,
+                    timestamp: registry.generated || registry.timestamp
                 }
             };
         }
