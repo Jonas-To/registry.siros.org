@@ -4,4 +4,4 @@
 # Lines starting with # are comments
 
 # SIROS Foundation examples
-sirosfoundation/mtcvctm
+leifj/vctm-template
