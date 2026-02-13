@@ -149,12 +149,113 @@ function fetchRaw(url, maxRedirects = 3) {
 /**
  * Load repositories from config file
  */
-function loadRepositories() {
+function loadExplicitRepositories() {
     const content = fs.readFileSync(CONFIG_FILE, 'utf-8');
     return content
         .split('\n')
         .map(line => line.trim())
         .filter(line => line && !line.startsWith('#'));
+}
+
+/**
+ * Search GitHub for repositories with the 'vctm' topic
+ */
+async function discoverRepositoriesByTopic(topic = 'vctm') {
+    const searchUrl = `https://api.github.com/search/repositories?q=topic:${topic}`;
+    console.log(`Searching GitHub for repositories with topic: ${topic}...`);
+    
+    return new Promise((resolve, reject) => {
+        const timeout = setTimeout(() => {
+            reject(new Error('Timeout searching GitHub'));
+        }, 10000);
+        
+        const req = https.get(searchUrl, {
+            headers: {
+                'User-Agent': 'registry.siros.org-builder/0.1.0',
+                'Accept': 'application/vnd.github.mercy-preview+json',
+                'Connection': 'close'
+            }
+        }, (res) => {
+            if (res.statusCode !== 200) {
+                clearTimeout(timeout);
+                res.resume();
+                console.warn(`  GitHub search returned HTTP ${res.statusCode}`);
+                resolve([]);
+                return;
+            }
+            
+            let data = '';
+            res.on('data', chunk => data += chunk);
+            res.on('end', () => {
+                clearTimeout(timeout);
+                try {
+                    const result = JSON.parse(data);
+                    const repos = (result.items || []).map(item => item.full_name);
+                    console.log(`  Found ${repos.length} repositories with topic '${topic}'`);
+                    resolve(repos);
+                } catch (e) {
+                    console.warn(`  Failed to parse GitHub search results`);
+                    resolve([]);
+                }
+            });
+        });
+        
+        req.on('error', (err) => {
+            clearTimeout(timeout);
+            console.warn(`  GitHub search failed: ${err.message}`);
+            resolve([]);
+        });
+    });
+}
+
+/**
+ * Check if a repository has a valid vctm branch with registry
+ */
+async function validateVctmRepo(repo) {
+    const [owner, name] = repo.split('/');
+    const registryUrl = `https://raw.githubusercontent.com/${owner}/${name}/vctm/.well-known/vctm-registry.json`;
+    
+    try {
+        const registry = await fetchJSON(registryUrl);
+        return registry !== null;
+    } catch {
+        return false;
+    }
+}
+
+/**
+ * Load repositories from config file and discover by topic
+ */
+async function loadRepositories() {
+    // Load explicitly configured repositories
+    const explicitRepos = loadExplicitRepositories();
+    console.log(`Found ${explicitRepos.length} explicitly configured repositories`);
+    
+    // Discover repositories by GitHub topic
+    const discoveredRepos = await discoverRepositoriesByTopic('vctm');
+    
+    // Combine and deduplicate
+    const allRepos = [...new Set([...explicitRepos, ...discoveredRepos])];
+    console.log(`Total unique repositories: ${allRepos.length}`);
+    
+    // Validate each repository in parallel
+    console.log('Validating repositories...');
+    const validationResults = await Promise.all(
+        allRepos.map(async (repo) => {
+            const isValid = await validateVctmRepo(repo);
+            if (!isValid) {
+                console.log(`  Skipping ${repo} (no valid vctm branch)`);
+            }
+            return { repo, isValid };
+        })
+    );
+    
+    const validRepos = validationResults
+        .filter(r => r.isValid)
+        .map(r => r.repo);
+    
+    console.log(`Found ${validRepos.length} valid VCTM repositories\n`);
+    return validRepos;
 }
 
 /**
@@ -316,9 +417,8 @@ async function build() {
     }
     fs.mkdirSync(DIST_DIR, { recursive: true });
     
-    // Load repositories
-    const repos = loadRepositories();
-    console.log(`Found ${repos.length} registered repositories\n`);
+    // Load and validate repositories (from config file + GitHub topic discovery)
+    const repos = await loadRepositories();
     
     // Fetch VCTMs from all repositories (in parallel)
     const repoPromises = repos.map(async (repo) => {
