@@ -1,0 +1,307 @@
+{{> header}}
+        <div class="container">
+            <nav class="breadcrumb">
+                <a href="/">Home</a>
+                <span class="separator">/</span>
+                <span class="current">GitHub Action Setup</span>
+            </nav>
+
+            <article class="docs-page">
+                <h1>mtcvctm GitHub Action</h1>
+                <p class="lead">
+                    Automatically generate and publish VCTM definitions from Markdown documentation 
+                    using the mtcvctm GitHub Action.
+                </p>
+
+                <section class="docs-section">
+                    <h2>Overview</h2>
+                    <p>
+                        <a href="https://github.com/marketplace/actions/mtcvctm-generate-vctm" target="_blank" class="btn btn-primary">View on GitHub Marketplace</a>
+                    </p>
+                    <p>
+                        The <code>mtcvctm</code> GitHub Action automates the process of:
+                    </p>
+                    <ul>
+                        <li>Converting Markdown credential documentation to VCTM JSON</li>
+                        <li>Maintaining a dedicated <code>vctm</code> branch with generated files</li>
+                        <li>Creating the registry manifest for discovery</li>
+                        <li>Keeping VCTMs synchronized with your documentation</li>
+                    </ul>
+                </section>
+
+                <section class="docs-section">
+                    <h2>Quick Start</h2>
+                    <p>
+                        Create <code>.github/workflows/vctm.yml</code> in your repository:
+                    </p>
+                    <pre><code>name: Generate VCTMs
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'credentials/**/*.md'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Generate VCTMs
+        uses: sirosfoundation/mtcvctm-action@v1
+        with:
+          input-dir: credentials
+          output-branch: vctm
+          base-url: https://example.com/credentials</code></pre>
+                </section>
+
+                <section class="docs-section">
+                    <h2>Action Inputs</h2>
+                    <table class="docs-table">
+                        <thead>
+                            <tr>
+                                <th>Input</th>
+                                <th>Required</th>
+                                <th>Default</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><code>input-dir</code></td>
+                                <td>Yes</td>
+                                <td>—</td>
+                                <td>Directory containing Markdown credential definitions</td>
+                            </tr>
+                            <tr>
+                                <td><code>output-branch</code></td>
+                                <td>No</td>
+                                <td><code>vctm</code></td>
+                                <td>Branch to publish generated VCTMs to</td>
+                            </tr>
+                            <tr>
+                                <td><code>base-url</code></td>
+                                <td>Yes</td>
+                                <td>—</td>
+                                <td>Base URL for VCT URIs (e.g., <code>https://example.com/credentials</code>)</td>
+                            </tr>
+                            <tr>
+                                <td><code>config-file</code></td>
+                                <td>No</td>
+                                <td><code>mtcvctm.yaml</code></td>
+                                <td>Path to configuration file</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </section>
+
+                <section class="docs-section">
+                    <h2>Markdown Format</h2>
+                    <p>
+                        Create Markdown files with YAML front matter to define your credentials:
+                    </p>
+                    <pre><code>---
+vct: https://example.com/credentials/IdentityCredential
+name: Identity Credential
+description: A credential attesting to a person's identity
+schema: https://example.com/schemas/identity.json
+extends: https://example.com/credentials/BaseCredential
+display:
+  background_color: "#1a73e8"
+  text_color: "#ffffff"
+  logo:
+    uri: https://example.com/logo.png
+    alt_text: Example Organization
+---
+
+# Identity Credential
+
+This credential represents a verified identity...
+
+## Claims
+
+| Claim | Description |
+|-------|-------------|
+| given_name | The person's given name |
+| family_name | The person's family name |
+| birthdate | Date of birth in ISO 8601 format |
+
+## Usage
+
+This credential can be used to...</code></pre>
+                </section>
+
+                <section class="docs-section">
+                    <h2>Configuration File</h2>
+                    <p>
+                        Optionally create <code>mtcvctm.yaml</code> for advanced configuration:
+                    </p>
+                    <pre><code># mtcvctm.yaml
+input: credentials
+output: dist/vctm
+base_url: https://example.com/credentials
+
+# Default display properties applied to all credentials
+defaults:
+  display:
+    locale: en-US
+    background_color: "#ffffff"
+    text_color: "#000000"
+
+# Organization metadata
+organization:
+  name: Example Organization
+  url: https://example.com
+  logo: https://example.com/logo.png</code></pre>
+                </section>
+
+                <section class="docs-section">
+                    <h2>Generated Output</h2>
+                    <p>
+                        The action creates the following structure in the <code>vctm</code> branch:
+                    </p>
+                    <pre><code>vctm/
+├── .well-known/
+│   └── vctm-registry.json    # Registry manifest
+├── credentials/
+│   ├── IdentityCredential.json
+│   └── MembershipCredential.json
+└── README.md                  # Auto-generated documentation</code></pre>
+                </section>
+
+                <section class="docs-section">
+                    <h2>Example Workflow: Multi-Environment</h2>
+                    <p>
+                        For organizations with staging and production environments:
+                    </p>
+                    <pre><code>name: Generate VCTMs
+
+on:
+  push:
+    branches: [main, develop]
+    paths:
+      - 'credentials/**/*.md'
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Set environment
+        id: env
+        run: |
+          if [ "${{ github.ref }}" = "refs/heads/main" ]; then
+            echo "base_url=https://credentials.example.com" >> $GITHUB_OUTPUT
+            echo "branch=vctm" >> $GITHUB_OUTPUT
+          else
+            echo "base_url=https://staging.credentials.example.com" >> $GITHUB_OUTPUT
+            echo "branch=vctm-staging" >> $GITHUB_OUTPUT
+          fi
+      
+      - name: Generate VCTMs
+        uses: sirosfoundation/mtcvctm-action@v1
+        with:
+          input-dir: credentials
+          output-branch: ${{ steps.env.outputs.branch }}
+          base-url: ${{ steps.env.outputs.base_url }}</code></pre>
+                </section>
+
+                <section class="docs-section">
+                    <h2>Manual Setup (Without Action)</h2>
+                    <p>
+                        If you prefer not to use the GitHub Action, you can use the 
+                        <code>mtcvctm</code> CLI directly:
+                    </p>
+                    <pre><code># Install mtcvctm
+go install github.com/sirosfoundation/mtcvctm@latest
+
+# Generate VCTMs
+mtcvctm generate -i credentials -o dist/vctm -b https://example.com/credentials
+
+# Generate registry manifest
+mtcvctm registry -i dist/vctm -o dist/vctm/.well-known/vctm-registry.json</code></pre>
+                    <p>
+                        Then manually create and push to the <code>vctm</code> branch.
+                    </p>
+                </section>
+
+                <section class="docs-section">
+                    <h2>Troubleshooting</h2>
+                    
+                    <h3>Action fails with "permission denied"</h3>
+                    <p>
+                        Ensure the workflow has write permissions:
+                    </p>
+                    <pre><code>permissions:
+  contents: write</code></pre>
+
+                    <h3>VCTMs not updating</h3>
+                    <p>
+                        Check that your <code>paths</code> filter includes all relevant files:
+                    </p>
+                    <pre><code>on:
+  push:
+    paths:
+      - 'credentials/**/*.md'
+      - 'mtcvctm.yaml'</code></pre>
+
+                    <h3>Invalid VCTM generated</h3>
+                    <p>
+                        Validate your Markdown front matter matches the expected schema.
+                        Run locally to debug:
+                    </p>
+                    <pre><code>mtcvctm generate -i credentials -o /tmp/vctm --verbose</code></pre>
+                </section>
+
+                <section class="docs-section">
+                    <h2>Next Steps</h2>
+                    <p>
+                        Once your GitHub Action is set up and generating VCTMs:
+                    </p>
+                    <ol>
+                        <li>
+                            Verify the <code>vctm</code> branch exists and contains valid VCTM files
+                        </li>
+                        <li>
+                            Check that <code>.well-known/vctm-registry.json</code> lists all your VCTMs
+                        </li>
+                        <li>
+                            <a href="/docs/register.html">Register your repository</a> with the SIROS Registry
+                        </li>
+                    </ol>
+                </section>
+
+                <section class="docs-section">
+                    <h2>Resources</h2>
+                    <ul>
+                        <li>
+                            <a href="https://github.com/marketplace/actions/mtcvctm-generate-vctm" target="_blank">
+                                <strong>mtcvctm on GitHub Marketplace</strong>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="https://github.com/sirosfoundation/mtcvctm" target="_blank">
+                                mtcvctm CLI Repository
+                            </a>
+                        </li>
+                        <li>
+                            <a href="https://github.com/sirosfoundation/mtcvctm-action" target="_blank">
+                                mtcvctm GitHub Action Repository
+                            </a>
+                        </li>
+                        <li>
+                            <a href="https://datatracker.ietf.org/doc/draft-ietf-oauth-sd-jwt-vc/" target="_blank">
+                                SD-JWT-VC Specification
+                            </a>
+                        </li>
+                    </ul>
+                </section>
+            </article>
+        </div>
+{{> footer}}

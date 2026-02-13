@@ -1,0 +1,133 @@
+{{> header}}
+        <div class="container">
+            <nav class="breadcrumb">
+                <a href="/">Home</a>
+                <span class="separator">/</span>
+                <a href="/{{org}}/">{{org}}</a>
+                <span class="separator">/</span>
+                <span class="current">{{#if vctm.name}}{{vctm.name}}{{else}}{{name}}{{/if}}</span>
+            </nav>
+
+            <section class="vctm-detail">
+                <header class="vctm-detail-header">
+                    <h1>{{#if vctm.name}}{{vctm.name}}{{else}}{{name}}{{/if}}</h1>
+                    {{#if vctm.description}}
+                    <p class="description">{{vctm.description}}</p>
+                    {{/if}}
+                </header>
+
+                <div class="vctm-detail-grid">
+                    <div class="vctm-info">
+                        <section class="info-section">
+                            <h2>Credential Type</h2>
+                            <dl>
+                                <dt>VCT URI</dt>
+                                <dd><code class="vct-uri">{{vctm.vct}}</code></dd>
+                                {{#if vctm.extends}}
+                                <dt>Extends</dt>
+                                <dd><code>{{vctm.extends}}</code></dd>
+                                {{/if}}
+                            </dl>
+                        </section>
+
+                        {{#if vctm.display}}
+                        <section class="info-section">
+                            <h2>Display Properties</h2>
+                            {{#each vctm.display}}
+                            <div class="display-locale">
+                                {{#if locale}}
+                                <h3>{{locale}}</h3>
+                                {{else}}
+                                <h3>Default</h3>
+                                {{/if}}
+                                <dl>
+                                    {{#if name}}
+                                    <dt>Name</dt>
+                                    <dd>{{name}}</dd>
+                                    {{/if}}
+                                    {{#if description}}
+                                    <dt>Description</dt>
+                                    <dd>{{description}}</dd>
+                                    {{/if}}
+                                    {{#if (or backgroundColor textColor)}}
+                                    <dt>Colors</dt>
+                                    <dd>
+                                        {{#if backgroundColor}}
+                                        <span class="color-swatch" style="background-color: {{backgroundColor}}"></span>
+                                        {{backgroundColor}}
+                                        {{/if}}
+                                        {{#if textColor}}
+                                        / {{textColor}}
+                                        {{/if}}
+                                    </dd>
+                                    {{/if}}
+                                </dl>
+                            </div>
+                            {{/each}}
+                        </section>
+                        {{/if}}
+
+                        {{#if vctm.claims}}
+                        <section class="info-section">
+                            <h2>Claims</h2>
+                            <table class="claims-table">
+                                <thead>
+                                    <tr>
+                                        <th>Path</th>
+                                        <th>Display Name</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {{#each vctm.claims}}
+                                    <tr>
+                                        <td><code>{{path}}</code></td>
+                                        <td>
+                                            {{#each display}}
+                                            {{#if @first}}
+                                            {{name}}
+                                            {{/if}}
+                                            {{/each}}
+                                        </td>
+                                    </tr>
+                                    {{/each}}
+                                </tbody>
+                            </table>
+                        </section>
+                        {{/if}}
+
+                        {{#if source}}
+                        <section class="info-section">
+                            <h2>Source</h2>
+                            <dl>
+                                <dt>Repository</dt>
+                                <dd>
+                                    <a href="{{source.url}}" target="_blank">
+                                        {{source.owner}}/{{source.repoName}}
+                                    </a>
+                                </dd>
+                                {{#if source.commit}}
+                                <dt>Commit</dt>
+                                <dd><code>{{source.commit}}</code></dd>
+                                {{/if}}
+                                {{#if source.timestamp}}
+                                <dt>Last Updated</dt>
+                                <dd>{{source.timestamp}}</dd>
+                                {{/if}}
+                            </dl>
+                        </section>
+                        {{/if}}
+                    </div>
+
+                    <div class="vctm-json">
+                        <section class="info-section">
+                            <h2>
+                                Raw JSON
+                                <a href="{{jsonUrl}}" class="btn btn-small" download>Download</a>
+                            </h2>
+                            <pre><code class="language-json">{{{rawJson}}}</code></pre>
+                        </section>
+                    </div>
+                </div>
+            </section>
+        </div>
+{{> footer}}

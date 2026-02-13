@@ -1,0 +1,172 @@
+{{> header}}
+        <div class="container">
+            <nav class="breadcrumb">
+                <a href="/">Home</a>
+                <span class="separator">/</span>
+                <span class="current">Register a Repository</span>
+            </nav>
+
+            <article class="docs-page">
+                <h1>Register a Repository</h1>
+                <p class="lead">
+                    Add your VCTM definitions to the SIROS Registry by submitting a pull request 
+                    to include your repository in our list.
+                </p>
+
+                <section class="docs-section">
+                    <h2>Prerequisites</h2>
+                    <p>Before registering, ensure your repository meets these requirements:</p>
+                    <ol>
+                        <li>
+                            <strong>A <code>vctm</code> branch</strong> containing your VCTM files.
+                            This branch is automatically created when you set up the 
+                            <a href="/docs/github-action.html">mtcvctm GitHub Action</a>.
+                        </li>
+                        <li>
+                            <strong>A registry manifest</strong> at <code>.well-known/vctm-registry.json</code>
+                            in the <code>vctm</code> branch, listing your VCTM files.
+                        </li>
+                        <li>
+                            <strong>Valid VCTM JSON files</strong> conforming to the 
+                            <a href="https://datatracker.ietf.org/doc/draft-ietf-oauth-sd-jwt-vc/" target="_blank">SD-JWT-VC specification</a>.
+                        </li>
+                    </ol>
+                </section>
+
+                <section class="docs-section">
+                    <h2>Step 1: Set Up Your Repository</h2>
+                    <p>
+                        The easiest way to prepare your repository is to use the 
+                        <a href="/docs/github-action.html">mtcvctm GitHub Action</a>, which automatically:
+                    </p>
+                    <ul>
+                        <li>Generates VCTM JSON from Markdown documentation</li>
+                        <li>Creates and maintains the <code>vctm</code> branch</li>
+                        <li>Builds the <code>.well-known/vctm-registry.json</code> manifest</li>
+                    </ul>
+                    <p>
+                        Alternatively, you can manually create the <code>vctm</code> branch and 
+                        populate it with your VCTM files.
+                    </p>
+                </section>
+
+                <section class="docs-section">
+                    <h2>Step 2: Fork the Registry Repository</h2>
+                    <ol>
+                        <li>
+                            Go to <a href="https://github.com/sirosfoundation/registry.siros.org" target="_blank">
+                            github.com/sirosfoundation/registry.siros.org</a>
+                        </li>
+                        <li>Click the <strong>Fork</strong> button to create your own copy</li>
+                        <li>Clone your fork locally:
+                            <pre><code>git clone https://github.com/YOUR-USERNAME/registry.siros.org.git
+cd registry.siros.org</code></pre>
+                        </li>
+                    </ol>
+                </section>
+
+                <section class="docs-section">
+                    <h2>Step 3: Add Your Repository</h2>
+                    <p>
+                        Edit the <code>config/repositories.txt</code> file to add your repository:
+                    </p>
+                    <pre><code># Each line should be: owner/repo
+# Lines starting with # are comments
+
+sirosfoundation/mtcvctm
+your-org/your-repo        # Add your repository here</code></pre>
+                    <p>
+                        The format is <code>owner/repository-name</code>, matching your GitHub URL.
+                    </p>
+                </section>
+
+                <section class="docs-section">
+                    <h2>Step 4: Submit a Pull Request</h2>
+                    <ol>
+                        <li>Commit your changes:
+                            <pre><code>git add config/repositories.txt
+git commit -m "Add your-org/your-repo to registry"</code></pre>
+                        </li>
+                        <li>Push to your fork:
+                            <pre><code>git push origin main</code></pre>
+                        </li>
+                        <li>
+                            Go to your fork on GitHub and click <strong>New Pull Request</strong>
+                        </li>
+                        <li>
+                            Fill in the PR description with:
+                            <ul>
+                                <li>A brief description of your credential types</li>
+                                <li>Link to your repository's <code>vctm</code> branch</li>
+                                <li>Any relevant documentation</li>
+                            </ul>
+                        </li>
+                    </ol>
+                </section>
+
+                <section class="docs-section">
+                    <h2>What Happens Next</h2>
+                    <p>After your PR is submitted:</p>
+                    <ol>
+                        <li>
+                            <strong>Automated validation</strong>: Our CI will verify your repository 
+                            has a valid <code>vctm</code> branch and registry manifest
+                        </li>
+                        <li>
+                            <strong>Review</strong>: A maintainer will review your submission
+                        </li>
+                        <li>
+                            <strong>Merge</strong>: Once approved, your PR will be merged
+                        </li>
+                        <li>
+                            <strong>Publication</strong>: Within 6 hours, your VCTMs will appear 
+                            at <code>https://registry.siros.org/your-org/</code>
+                        </li>
+                    </ol>
+                </section>
+
+                <section class="docs-section">
+                    <h2>Registry Manifest Format</h2>
+                    <p>
+                        Your <code>.well-known/vctm-registry.json</code> should follow this format:
+                    </p>
+                    <pre><code>{
+  "name": "Your Organization VCTMs",
+  "description": "Verifiable Credential Type Metadata for ...",
+  "vctms": [
+    {
+      "name": "IdentityCredential",
+      "path": "credentials/identity.json"
+    },
+    {
+      "name": "MembershipCredential",
+      "path": "credentials/membership.json"
+    }
+  ],
+  "commit": "abc123...",
+  "timestamp": "2026-02-13T12:00:00Z"
+}</code></pre>
+                </section>
+
+                <section class="docs-section">
+                    <h2>Need Help?</h2>
+                    <p>
+                        If you encounter issues or have questions:
+                    </p>
+                    <ul>
+                        <li>
+                            <a href="https://github.com/sirosfoundation/registry.siros.org/issues" target="_blank">
+                                Open an issue</a> on the registry repository
+                        </li>
+                        <li>
+                            Check the <a href="https://github.com/sirosfoundation/mtcvctm" target="_blank">
+                                mtcvctm documentation</a> for the CLI tool
+                        </li>
+                        <li>
+                            Review existing repositories in the registry for examples
+                        </li>
+                    </ul>
+                </section>
+            </article>
+        </div>
+{{> footer}}

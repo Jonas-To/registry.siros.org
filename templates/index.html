@@ -1,0 +1,66 @@
+{{> header}}
+        <div class="container">
+            <section class="hero">
+                <h1>VCTM Registry</h1>
+                <p class="hero-subtitle">
+                    A curated collection of Verifiable Credential Type Metadata (VCTM) 
+                    definitions for the SD-JWT-VC ecosystem.
+                </p>
+                <div class="stats">
+                    <div class="stat">
+                        <span class="stat-value">{{totalOrgs}}</span>
+                        <span class="stat-label">Organizations</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-value">{{totalVctms}}</span>
+                        <span class="stat-label">VCTMs</span>
+                    </div>
+                </div>
+            </section>
+
+            <section class="org-list">
+                <h2>Organizations</h2>
+                {{#if orgs}}
+                <div class="card-grid">
+                    {{#each orgs}}
+                    <a href="/{{name}}/" class="card">
+                        <h3>{{name}}</h3>
+                        <p class="vctm-count">{{vctmCount}} VCTM{{#unless (eq vctmCount 1)}}s{{/unless}}</p>
+                        <ul class="vctm-preview">
+                            {{#each vctms}}
+                            {{#if @first}}
+                            <li>{{vctm.name}}</li>
+                            {{/if}}
+                            {{/each}}
+                            {{#if (gt vctms.length 1)}}
+                            <li class="more">+{{subtract vctms.length 1}} more</li>
+                            {{/if}}
+                        </ul>
+                    </a>
+                    {{/each}}
+                </div>
+                {{else}}
+                <p class="empty-state">No VCTMs registered yet. <a href="https://github.com/sirosfoundation/registry.siros.org">Learn how to register.</a></p>
+                {{/if}}
+            </section>
+
+            <section class="about">
+                <h2>What is VCTM?</h2>
+                <p>
+                    Verifiable Credential Type Metadata (VCTM) is a JSON document that describes 
+                    how to display and validate SD-JWT Verifiable Credentials. It includes:
+                </p>
+                <ul>
+                    <li><strong>Display properties</strong> - Name, description, and visual styling</li>
+                    <li><strong>Claims metadata</strong> - Human-readable names for credential claims</li>
+                    <li><strong>Rendering hints</strong> - SVG templates and styling instructions</li>
+                    <li><strong>Schema information</strong> - JSON Schema for validation</li>
+                </ul>
+                <p>
+                    <a href="https://datatracker.ietf.org/doc/draft-ietf-oauth-sd-jwt-vc/" target="_blank">
+                        Learn more about SD-JWT-VC →
+                    </a>
+                </p>
+            </section>
+        </div>
+{{> footer}}
