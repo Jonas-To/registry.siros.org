@@ -1,7 +1,0 @@
-# VCTM Repository Registry
-# Add repositories that publish VCTMs via the mtcvctm GitHub Action
-# Format: owner/repo (one per line)
-# Lines starting with # are comments
-
-# SIROS Foundation examples
-leifj/vctm-template

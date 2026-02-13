@@ -11,7 +11,6 @@ const path = require('path');
 const https = require('https');
 const Handlebars = require('handlebars');
 
-const CONFIG_FILE = path.join(__dirname, '..', 'config', 'repositories.txt');
 const TEMPLATES_DIR = path.join(__dirname, '..', 'templates');
 const STATIC_DIR = path.join(__dirname, '..', 'static');
 const DIST_DIR = path.join(__dirname, '..', 'dist');
@@ -147,17 +146,6 @@ function fetchRaw(url, maxRedirects = 3) {
 }
 
 /**
- * Load repositories from config file
- */
-function loadExplicitRepositories() {
-    const content = fs.readFileSync(CONFIG_FILE, 'utf-8');
-    return content
-        .split('\n')
-        .map(line => line.trim())
-        .filter(line => line && !line.startsWith('#'));
-}
-
-/**
  * Search GitHub for repositories with the 'vctm' topic
  */
 async function discoverRepositoriesByTopic(topic = 'vctm') {
@@ -224,24 +212,21 @@ async function validateVctmRepo(repo) {
 }
 
 /**
- * Load repositories from config file and discover by topic
+ * Discover and validate VCTM repositories by GitHub topic
  */
 async function loadRepositories() {
-    // Load explicitly configured repositories
-    const explicitRepos = loadExplicitRepositories();
-    console.log(`Found ${explicitRepos.length} explicitly configured repositories`);
-    
     // Discover repositories by GitHub topic
     const discoveredRepos = await discoverRepositoriesByTopic('vctm');
     
-    // Combine and deduplicate
-    const allRepos = [...new Set([...explicitRepos, ...discoveredRepos])];
-    console.log(`Total unique repositories: ${allRepos.length}`);
+    if (discoveredRepos.length === 0) {
+        console.log('No repositories found with vctm topic');
+        return [];
+    }
     
     // Validate each repository in parallel
     console.log('Validating repositories...');
     const validationResults = await Promise.all(
-        allRepos.map(async (repo) => {
+        discoveredRepos.map(async (repo) => {
             const isValid = await validateVctmRepo(repo);
             if (!isValid) {
                 console.log(`  Skipping ${repo} (no valid vctm branch)`);
