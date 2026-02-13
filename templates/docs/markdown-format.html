@@ -82,6 +82,36 @@ A verifiable credential for identity verification.
                 </section>
 
                 <section class="docs-section">
+                    <h2>Credential-Level Localization</h2>
+                    <p>
+                        Localize the credential name and description into multiple languages using
+                        the <code>display</code> block in front matter:
+                    </p>
+                    <pre><code>---
+vct: https://example.com/credentials/student-id
+display:
+  de-DE:
+    name: "Studentenausweis"
+    description: "Ein digitaler Studentenausweis"
+  fr-FR:
+    name: "Carte étudiant"
+    description: "Une carte étudiant numérique"
+  sv-SE:
+    name: "Studentlegitimation"
+    description: "Ett digitalt studentkort"
+---
+
+# Student ID
+
+A digital student identification credential.</code></pre>
+                    <p>
+                        Each locale key (e.g., <code>de-DE</code>, <code>fr-FR</code>) creates a separate
+                        display entry in the generated VCTM. The default locale is taken from the H1 title
+                        and first paragraph, using the language configured for the generation (default: <code>en-US</code>).
+                    </p>
+                </section>
+
+                <section class="docs-section">
                     <h2>Title and Description</h2>
                     <p>
                         The first <code>H1</code> heading becomes the credential name, and the first 
@@ -140,6 +170,11 @@ A digital student identification credential issued by educational institutions.<
                                 <td>No</td>
                                 <td>Selective disclosure setting</td>
                             </tr>
+                            <tr>
+                                <td><code>[svg_id=id]</code></td>
+                                <td>No</td>
+                                <td>ID of element in SVG template to populate with this claim</td>
+                            </tr>
                         </tbody>
                     </table>
 
@@ -154,7 +189,13 @@ A digital student identification credential issued by educational institutions.<
 - `personal_id` "Personal ID" (string): Unique identifier [mandatory] [sd=always]
 
 # Claim with complex type
-- `address` "Address" (object): Current residential address [sd=always]</code></pre>
+- `address` "Address" (object): Current residential address [sd=always]
+
+# Combined flags in one bracket
+- `birth_date` "Date of Birth" (date): Birth date [mandatory, sd=always, svg_id=dob]
+
+# SVG template mapping
+- `photo` "Photo" (image): Holder's photograph [mandatory, svg_id=photo_element]</code></pre>
                 </section>
 
                 <section class="docs-section">
