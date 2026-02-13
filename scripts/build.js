@@ -33,7 +33,7 @@ function fetchJSON(url, maxRedirects = 3) {
     return new Promise((resolve, reject) => {
         const timeout = setTimeout(() => {
             reject(new Error(`Timeout fetching ${url}`));
-        }, 10000);
+        }, 5000);
 
         const makeRequest = (requestUrl, redirectsLeft) => {
             const req = https.get(requestUrl, {
@@ -89,7 +89,7 @@ function fetchRaw(url, maxRedirects = 3) {
     return new Promise((resolve, reject) => {
         const timeout = setTimeout(() => {
             reject(new Error(`Timeout fetching ${url}`));
-        }, 10000);
+        }, 5000);
 
         const makeRequest = (requestUrl, redirectsLeft) => {
             const req = https.get(requestUrl, {
@@ -163,16 +163,16 @@ async function fetchRepoVCTMs(repo) {
         return null;
     }
     
-    // Fetch each VCTM file listed in the registry
-    const vctms = [];
+    // Fetch each VCTM file listed in the registry (in parallel)
     const files = registry.vctms || [];
     
-    for (const file of files) {
+    const vctmPromises = files.map(async (file) => {
         const vctmUrl = `${baseUrl}/${file.path}`;
         const vctm = await fetchJSON(vctmUrl);
         
         if (vctm) {
-            vctms.push({
+            console.log(`  Found: ${file.path}`);
+            return {
                 name: file.name || path.basename(file.path, '.json'),
                 path: file.path,
                 vctm,
@@ -184,10 +184,13 @@ async function fetchRepoVCTMs(repo) {
                     commit: registry.commit,
                     timestamp: registry.timestamp
                 }
-            });
-            console.log(`  Found: ${file.path}`);
+            };
         }
-    }
+        return null;
+    });
+    
+    const vctmResults = await Promise.all(vctmPromises);
+    const vctms = vctmResults.filter(v => v !== null);
     
     return {
         owner,
@@ -302,18 +305,18 @@ async function build() {
     const repos = loadRepositories();
     console.log(`Found ${repos.length} registered repositories\n`);
     
-    // Fetch VCTMs from all repositories
-    const repoData = [];
-    for (const repo of repos) {
+    // Fetch VCTMs from all repositories (in parallel)
+    const repoPromises = repos.map(async (repo) => {
         try {
-            const data = await fetchRepoVCTMs(repo);
-            if (data) {
-                repoData.push(data);
-            }
+            return await fetchRepoVCTMs(repo);
         } catch (err) {
             console.error(`  Error fetching ${repo}: ${err.message}`);
+            return null;
         }
-    }
+    });
+    
+    const repoResults = await Promise.all(repoPromises);
+    const repoData = repoResults.filter(data => data !== null);
     
     console.log('\nOrganizing VCTMs...');
     const byOrg = organizeByOrg(repoData);
@@ -333,6 +336,7 @@ async function build() {
     if (templates.index) {
         const indexHtml = templates.index({
             title: 'VCTM Registry',
+            rootPath: './',
             orgs,
             totalVctms,
             totalOrgs: orgs.length,
@@ -350,6 +354,7 @@ async function build() {
         for (const [name, template] of Object.entries(templates.docs)) {
             const html = template({
                 title: `${name.charAt(0).toUpperCase() + name.slice(1).replace(/-/g, ' ')} - VCTM Registry`,
+                rootPath: '../',
                 buildTime
             });
             fs.writeFileSync(path.join(docsDir, `${name}.html`), html);
@@ -366,6 +371,7 @@ async function build() {
         if (templates.org) {
             const orgHtml = templates.org({
                 title: `${orgName} - VCTM Registry`,
+                rootPath: '../',
                 org,
                 vctms: org.vctms,
                 buildTime
@@ -389,11 +395,12 @@ async function build() {
             if (templates.vctm) {
                 const vctmHtml = templates.vctm({
                     title: `${vctmData.vctm.name || vctmName} - VCTM Registry`,
+                    rootPath: '../',
                     vctm: vctmData.vctm,
                     source: vctmData.source,
                     org: orgName,
                     name: vctmName,
-                    jsonUrl: `/${orgName}/${vctmName}.json`,
+                    jsonUrl: `${vctmName}.json`,
                     rawJson: JSON.stringify(vctmData.vctm, null, 2),
                     buildTime
                 });
