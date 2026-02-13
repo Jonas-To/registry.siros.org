@@ -37,10 +37,14 @@ function fetchJSON(url, maxRedirects = 3) {
 
         const makeRequest = (requestUrl, redirectsLeft) => {
             const req = https.get(requestUrl, {
-                headers: { 'User-Agent': 'registry.siros.org-builder/0.1.0' }
+                headers: { 
+                    'User-Agent': 'registry.siros.org-builder/0.1.0',
+                    'Connection': 'close'
+                }
             }, (res) => {
                 // Handle redirects
                 if (res.statusCode >= 300 && res.statusCode < 400 && res.headers.location) {
+                    res.resume(); // Consume response to free up connection
                     if (redirectsLeft <= 0) {
                         clearTimeout(timeout);
                         reject(new Error(`Too many redirects for ${url}`));
@@ -51,11 +55,13 @@ function fetchJSON(url, maxRedirects = 3) {
                 }
 
                 if (res.statusCode === 404) {
+                    res.resume(); // Consume response
                     clearTimeout(timeout);
                     resolve(null);
                     return;
                 }
                 if (res.statusCode !== 200) {
+                    res.resume(); // Consume response
                     clearTimeout(timeout);
                     reject(new Error(`HTTP ${res.statusCode} for ${url}`));
                     return;
@@ -93,10 +99,14 @@ function fetchRaw(url, maxRedirects = 3) {
 
         const makeRequest = (requestUrl, redirectsLeft) => {
             const req = https.get(requestUrl, {
-                headers: { 'User-Agent': 'registry.siros.org-builder/0.1.0' }
+                headers: { 
+                    'User-Agent': 'registry.siros.org-builder/0.1.0',
+                    'Connection': 'close'
+                }
             }, (res) => {
                 // Handle redirects
                 if (res.statusCode >= 300 && res.statusCode < 400 && res.headers.location) {
+                    res.resume(); // Consume response to free up connection
                     if (redirectsLeft <= 0) {
                         clearTimeout(timeout);
                         reject(new Error(`Too many redirects for ${url}`));
@@ -107,11 +117,13 @@ function fetchRaw(url, maxRedirects = 3) {
                 }
 
                 if (res.statusCode === 404) {
+                    res.resume(); // Consume response
                     clearTimeout(timeout);
                     resolve(null);
                     return;
                 }
                 if (res.statusCode !== 200) {
+                    res.resume(); // Consume response
                     clearTimeout(timeout);
                     reject(new Error(`HTTP ${res.statusCode} for ${url}`));
                     return;
