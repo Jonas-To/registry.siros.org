@@ -16,6 +16,30 @@
                     {{/if}}
                 </header>
 
+                {{#each vctm.display}}
+                {{#if rendering.svg_templates}}
+                <section class="svg-template-section">
+                    <h2>Credential Template Preview</h2>
+                    <div class="svg-template-preview">
+                        {{#each rendering.svg_templates}}
+                        <div class="svg-template-card">
+                            <object type="image/svg+xml" data="{{uri}}" class="svg-template-object">
+                                <p>SVG template preview not available</p>
+                            </object>
+                            {{#if properties}}
+                            <div class="svg-template-props">
+                                {{#if properties.orientation}}<span class="prop">{{properties.orientation}}</span>{{/if}}
+                                {{#if properties.color_scheme}}<span class="prop">{{properties.color_scheme}}</span>{{/if}}
+                                {{#if properties.contrast}}<span class="prop">{{properties.contrast}}</span>{{/if}}
+                            </div>
+                            {{/if}}
+                        </div>
+                        {{/each}}
+                    </div>
+                </section>
+                {{/if}}
+                {{/each}}
+
                 <div class="vctm-detail-grid">
                     <div class="vctm-info">
                         <section class="info-section">
