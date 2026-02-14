@@ -23,9 +23,7 @@
                     <div class="svg-template-preview">
                         {{#each rendering.svg_templates}}
                         <div class="svg-template-card">
-                            <object type="image/svg+xml" data="{{uri}}" class="svg-template-object">
-                                <p>SVG template preview not available</p>
-                            </object>
+                            <img src="{{uri}}" alt="SVG credential template" class="svg-template-object" onerror="this.parentElement.innerHTML='<p>SVG template preview not available</p>'">
                             {{#if properties}}
                             <div class="svg-template-props">
                                 {{#if properties.orientation}}<span class="prop">{{properties.orientation}}</span>{{/if}}
