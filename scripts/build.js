@@ -649,20 +649,79 @@ async function build() {
     const wellKnownDir = path.join(DIST_DIR, '.well-known');
     fs.mkdirSync(wellKnownDir, { recursive: true });
     
+    // Build comprehensive credentials list with format-specific links
+    const credentials = Object.values(byOrg).flatMap(org => 
+        org.vctms.map(v => {
+            const basePath = `/${org.name}/${encodeURIComponent(v.name)}`;
+            const formats = {};
+            
+            // SD-JWT VC Type Metadata (always present)
+            formats.vctm = {
+                url: `https://registry.siros.org${basePath}.vctm.json`,
+                type: 'application/json',
+                spec: 'https://datatracker.ietf.org/doc/draft-ietf-oauth-sd-jwt-vc/'
+            };
+            
+            // mso_mdoc (ISO 18013-5) if available
+            if (v.formats && v.formats.mdoc) {
+                formats.mdoc = {
+                    url: `https://registry.siros.org${basePath}.mdoc.json`,
+                    type: 'application/json',
+                    spec: 'https://www.iso.org/standard/69084.html',
+                    doctype: v.formats.mdoc.data?.doctype || null
+                };
+            }
+            
+            // W3C VCDM 2.0 if available
+            if (v.formats && v.formats.vc) {
+                formats.vc = {
+                    url: `https://registry.siros.org${basePath}.vc.json`,
+                    type: 'application/json',
+                    spec: 'https://www.w3.org/TR/vc-data-model-2.0/'
+                };
+            }
+            
+            return {
+                // Primary identifier
+                vct: v.vctm.vct,
+                
+                // Human-readable metadata
+                name: v.vctm.name,
+                description: v.vctm.description || null,
+                organization: org.name,
+                
+                // Links to format-specific files
+                formats,
+                
+                // Human-readable page on registry
+                metadata: {
+                    html: `https://registry.siros.org${basePath}.html`,
+                    json: `https://registry.siros.org${basePath}.json`
+                },
+                
+                // Source repository
+                source: v.source ? {
+                    repository: v.source.url,
+                    branch: 'vctm'
+                } : null
+            };
+        })
+    );
+    
     // Generate registry index
     const registryIndex = {
-        name: 'SIROS VCTM Registry',
+        '$schema': 'https://registry.siros.org/schemas/vctm-registry.json',
+        name: 'SIROS Credential Registry',
+        description: 'A public registry of credential metadata for SD-JWT VC, mDOC, and W3C VC ecosystems',
         url: 'https://registry.siros.org',
-        version: '1.0',
-        organizations: Object.keys(byOrg),
-        vctms: Object.values(byOrg).flatMap(org => 
-            org.vctms.map(v => ({
-                vct: v.vctm.vct,
-                name: v.vctm.name,
-                org: org.name,
-                path: `/${org.name}/${v.name}.json`
-            }))
-        ),
+        version: '2.0',
+        organizations: Object.keys(byOrg).map(name => ({
+            name,
+            url: `https://registry.siros.org/${name}/`,
+            credentials: byOrg[name].vctms.length
+        })),
+        credentials,
+        totalCredentials: credentials.length,
         buildTime
     };
     
