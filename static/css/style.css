@@ -133,6 +133,15 @@ main {
     gap: 3rem;
 }
 
+.hero-actions {
+    margin-top: 2rem;
+}
+
+.btn-large {
+    font-size: 1.1rem;
+    padding: 0.875rem 2rem;
+}
+
 .stat {
     display: flex;
     flex-direction: column;
