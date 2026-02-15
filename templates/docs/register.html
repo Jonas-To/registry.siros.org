@@ -3,15 +3,15 @@
             <nav class="breadcrumb">
                 <a href="/">Home</a>
                 <span class="separator">/</span>
-                <span class="current">Register a Repository</span>
+                <span class="current">Add Your Repository</span>
             </nav>
 
             <article class="docs-page">
-                <h1>Register a Repository</h1>
+                <h1>Add Your Repository</h1>
                 <p class="lead">
-                    Add your VCTM definitions to the SIROS Registry by adding the <code>vctm</code> topic
+                    Add your credential definitions to the Registry by adding the <code>vctm</code> topic
                     to your GitHub repository. The registry automatically discovers and includes repositories
-                    with valid VCTM content.
+                    with valid content.
                 </p>
 
                 <section class="docs-section">
@@ -20,7 +20,7 @@
                         Use the <a href="/docs/github-action.html">mtcvctm GitHub Action</a> to automatically:
                     </p>
                     <ul>
-                        <li>Generate VCTM JSON from Markdown documentation</li>
+                        <li>Generate credential metadata from Markdown documentation (SD-JWT VC, mDOC, W3C VC)</li>
                         <li>Create and maintain the <code>vctm</code> branch</li>
                         <li>Build the <code>.well-known/vctm-registry.json</code> manifest</li>
                     </ul>
@@ -74,8 +74,7 @@
                             A manifest at <code>.well-known/vctm-registry.json</code>
                         </li>
                         <li>
-                            Valid VCTM JSON files conforming to the 
-                            <a href="https://datatracker.ietf.org/doc/draft-ietf-oauth-sd-jwt-vc/" target="_blank">SD-JWT-VC specification</a>
+                            Valid credential metadata files (<code>.vctm.json</code>, <code>.mdoc.json</code>, or <code>.vc.json</code>)
                         </li>
                     </ul>
                 </section>

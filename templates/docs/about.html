@@ -7,18 +7,19 @@
             </nav>
 
             <article class="docs-page">
-                <h1>About the VCTM Registry</h1>
+                <h1>About the Credential Registry</h1>
                 <p class="lead">
-                    The VCTM Registry is a public directory of Verifiable Credential Type Metadata, 
-                    helping verifiers and wallets discover and understand credential types.
+                    The SIROS Credential Registry is a public directory of credential metadata, 
+                    helping verifiers and wallets discover and understand credential types across 
+                    SD-JWT VC, mDOC, and W3C VC ecosystems.
                 </p>
 
                 <section class="docs-section">
-                    <h2>What is VCTM?</h2>
+                    <h2>What is Credential Metadata?</h2>
                     <p>
-                        <strong>Verifiable Credential Type Metadata (VCTM)</strong> is a standardized format 
-                        for describing verifiable credentials. It provides essential information about 
-                        credential types including:
+                        <strong>Credential metadata</strong> is standardized information that describes 
+                        verifiable credentials, enabling interoperability across different implementations. 
+                        It includes:
                     </p>
                     <ul>
                         <li><strong>Display information</strong> - names, descriptions, logos, and colors</li>
@@ -26,11 +27,26 @@
                         <li><strong>Rendering templates</strong> - how to visually present the credential</li>
                         <li><strong>Validation rules</strong> - which claims are mandatory or selectively disclosable</li>
                     </ul>
-                    <p>
-                        VCTM is defined in the 
-                        <a href="https://datatracker.ietf.org/doc/draft-ietf-oauth-sd-jwt-vc/" target="_blank">
-                            SD-JWT VC specification</a>.
-                    </p>
+                    
+                    <h3>Supported Formats</h3>
+                    <p>The registry supports metadata for multiple credential formats:</p>
+                    <ul>
+                        <li>
+                            <strong>SD-JWT VC (VCTM)</strong> - 
+                            <a href="https://datatracker.ietf.org/doc/draft-ietf-oauth-sd-jwt-vc/" target="_blank">
+                                IETF SD-JWT Verifiable Credentials</a>
+                        </li>
+                        <li>
+                            <strong>mso_mdoc</strong> - 
+                            <a href="https://www.iso.org/standard/69084.html" target="_blank">
+                                ISO 18013-5 mobile documents</a> (mDL, mID, etc.)
+                        </li>
+                        <li>
+                            <strong>W3C VCDM 2.0</strong> - 
+                            <a href="https://www.w3.org/TR/vc-data-model-2.0/" target="_blank">
+                                W3C Verifiable Credentials Data Model</a>
+                        </li>
+                    </ul>
                 </section>
 
                 <section class="docs-section">
@@ -88,7 +104,7 @@
                         </li>
                         <li>
                             <a href="https://github.com/sirosfoundation/mtcvctm" target="_blank">
-                                mtcvctm</a> - CLI tool and GitHub Action for generating VCTMs
+                                mtcvctm</a> - CLI tool and GitHub Action for generating multi-format credential metadata
                         </li>
                     </ul>
                     <p>
