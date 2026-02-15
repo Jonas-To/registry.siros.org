@@ -290,6 +290,61 @@ main {
     font-size: 0.875rem;
 }
 
+/* Format Downloads */
+.format-downloads {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+}
+
+.btn-download {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.625rem 1rem;
+    background-color: var(--color-background);
+    color: var(--color-text);
+    border: 1px solid var(--color-border);
+    font-size: 0.875rem;
+}
+
+.btn-download:hover {
+    background-color: var(--color-border);
+    text-decoration: none;
+}
+
+.btn-download.btn-primary {
+    background-color: var(--color-primary);
+    color: white;
+    border-color: var(--color-primary);
+}
+
+.btn-download.btn-primary:hover {
+    background-color: var(--color-primary-dark);
+    border-color: var(--color-primary-dark);
+}
+
+.format-description {
+    font-size: 0.875rem;
+    color: var(--color-text-muted);
+    margin: 0.5rem 0 1rem;
+}
+
+.format-meta {
+    font-size: 0.9rem;
+}
+
+.format-meta dt {
+    font-weight: 500;
+    color: var(--color-text-muted);
+}
+
+.format-meta dd {
+    margin-left: 0;
+    margin-bottom: 0.5rem;
+}
+
 /* Breadcrumb */
 .breadcrumb {
     margin-bottom: 2rem;

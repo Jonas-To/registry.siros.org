@@ -142,12 +142,46 @@
 
                     <div class="vctm-json">
                         <section class="info-section">
-                            <h2>
-                                Raw JSON
-                                <a href="{{jsonUrl}}" class="btn btn-small" download>Download</a>
-                            </h2>
+                            <h2>Download</h2>
+                            <div class="format-downloads">
+                                {{#each availableFormats}}
+                                <a href="{{file}}" class="btn btn-download{{#if @first}} btn-primary{{/if}}" download>
+                                    {{label}}
+                                </a>
+                                {{/each}}
+                            </div>
+                        </section>
+                        
+                        <section class="info-section">
+                            <h2>SD-JWT VC Type Metadata (VCTM)</h2>
                             <pre><code class="language-json">{{{rawJson}}}</code></pre>
                         </section>
+                        
+                        {{#if mdoc}}
+                        <section class="info-section">
+                            <h2>mso_mdoc Configuration</h2>
+                            <p class="format-description">OpenID4VCI credential configuration for ISO 18013-5 mobile documents</p>
+                            <dl class="format-meta">
+                                {{#if mdoc.doctype}}
+                                <dt>DocType</dt>
+                                <dd><code>{{mdoc.doctype}}</code></dd>
+                                {{/if}}
+                            </dl>
+                        </section>
+                        {{/if}}
+                        
+                        {{#if vc}}
+                        <section class="info-section">
+                            <h2>W3C Verifiable Credential Schema</h2>
+                            <p class="format-description">W3C VCDM 2.0 JSON Schema</p>
+                            <dl class="format-meta">
+                                {{#if vc.type}}
+                                <dt>Type</dt>
+                                <dd><code>{{vc.type}}</code></dd>
+                                {{/if}}
+                            </dl>
+                        </section>
+                        {{/if}}
                     </div>
                 </div>
             </section>
