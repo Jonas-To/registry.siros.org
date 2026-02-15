@@ -35,10 +35,18 @@ function fetchJSON(url, maxRedirects = 3) {
         }, 5000);
 
         const makeRequest = (requestUrl, redirectsLeft) => {
-            const req = https.get(requestUrl, {
+            // Add cache-busting parameter for raw.githubusercontent.com
+            let finalUrl = requestUrl;
+            if (requestUrl.includes('raw.githubusercontent.com')) {
+                const separator = requestUrl.includes('?') ? '&' : '?';
+                finalUrl = `${requestUrl}${separator}t=${Date.now()}`;
+            }
+            
+            const req = https.get(finalUrl, {
                 headers: { 
                     'User-Agent': 'registry.siros.org-builder/0.1.0',
-                    'Connection': 'close'
+                    'Connection': 'close',
+                    'Cache-Control': 'no-cache'
                 }
             }, (res) => {
                 // Handle redirects
@@ -97,10 +105,18 @@ function fetchRaw(url, maxRedirects = 3) {
         }, 5000);
 
         const makeRequest = (requestUrl, redirectsLeft) => {
-            const req = https.get(requestUrl, {
+            // Add cache-busting parameter for raw.githubusercontent.com
+            let finalUrl = requestUrl;
+            if (requestUrl.includes('raw.githubusercontent.com')) {
+                const separator = requestUrl.includes('?') ? '&' : '?';
+                finalUrl = `${requestUrl}${separator}t=${Date.now()}`;
+            }
+            
+            const req = https.get(finalUrl, {
                 headers: { 
                     'User-Agent': 'registry.siros.org-builder/0.1.0',
-                    'Connection': 'close'
+                    'Connection': 'close',
+                    'Cache-Control': 'no-cache'
                 }
             }, (res) => {
                 // Handle redirects
@@ -268,26 +284,84 @@ async function fetchRepoVCTMs(repo) {
     const vctmPromises = files.map(async (file) => {
         // Support both path (old) and vctm_file (new) formats
         const filePath = file.vctm_file || file.path;
-        const vctmUrl = `${baseUrl}/${filePath}`;
-        const vctm = await fetchJSON(vctmUrl);
         
-        if (vctm) {
-            console.log(`  Found: ${filePath}`);
-            return {
-                name: file.name || path.basename(filePath, '.vctm'),
-                path: filePath,
-                vctm,
-                source: {
-                    repo,
-                    owner,
-                    repoName: name,
-                    url: `https://github.com/${repo}`,
-                    commit: registry.repository?.commit || registry.commit,
-                    timestamp: registry.generated || registry.timestamp
-                }
-            };
+        // Derive base name for format detection
+        let baseName = filePath;
+        // Remove directory prefix if present
+        if (baseName.includes('/')) {
+            baseName = baseName.split('/').pop();
         }
-        return null;
+        // Remove known extensions to get base name
+        // Note: .vctm is the old extension (without .json)
+        const formatExtensions = ['.vctm.json', '.mdoc.json', '.vc.json', '.vctm', '.json'];
+        for (const ext of formatExtensions) {
+            if (baseName.endsWith(ext)) {
+                baseName = baseName.slice(0, -ext.length);
+                break;
+            }
+        }
+        
+        // Determine directory prefix
+        const dirPrefix = filePath.includes('/') ? filePath.split('/').slice(0, -1).join('/') + '/' : '';
+        
+        // Try to fetch the primary VCTM file
+        // First try new naming convention (.vctm.json), then fall back to old (.json)
+        let vctm = null;
+        let actualVctmPath = null;
+        
+        // Try new naming: name.vctm.json
+        const newVctmPath = `${dirPrefix}${baseName}.vctm.json`;
+        vctm = await fetchJSON(`${baseUrl}/${newVctmPath}`);
+        if (vctm) {
+            actualVctmPath = newVctmPath;
+        } else {
+            // Fall back to old naming: name.json
+            vctm = await fetchJSON(`${baseUrl}/${filePath}`);
+            if (vctm) {
+                actualVctmPath = filePath;
+            }
+        }
+        
+        if (!vctm) {
+            console.log(`  Not found: ${filePath}`);
+            return null;
+        }
+        
+        console.log(`  Found VCTM: ${actualVctmPath}`);
+        
+        // Try to fetch additional formats (mDOC and W3C)
+        const formats = { vctm: { data: vctm, path: actualVctmPath } };
+        
+        // Try mDOC format (.mdoc.json)
+        const mdocPath = `${dirPrefix}${baseName}.mdoc.json`;
+        const mdoc = await fetchJSON(`${baseUrl}/${mdocPath}`);
+        if (mdoc) {
+            formats.mdoc = { data: mdoc, path: mdocPath };
+            console.log(`  Found mDOC: ${mdocPath}`);
+        }
+        
+        // Try W3C format (.vc.json)
+        const vcPath = `${dirPrefix}${baseName}.vc.json`;
+        const vc = await fetchJSON(`${baseUrl}/${vcPath}`);
+        if (vc) {
+            formats.vc = { data: vc, path: vcPath };
+            console.log(`  Found W3C VC: ${vcPath}`);
+        }
+        
+        return {
+            name: file.name || baseName,
+            path: actualVctmPath,
+            vctm,
+            formats,
+            source: {
+                repo,
+                owner,
+                repoName: name,
+                url: `https://github.com/${repo}`,
+                commit: registry.repository?.commit || registry.commit,
+                timestamp: registry.generated || registry.timestamp
+            }
+        };
     });
     
     const vctmResults = await Promise.all(vctmPromises);
@@ -483,13 +557,61 @@ async function build() {
         // Individual VCTM pages and JSON files
         for (const vctmData of org.vctms) {
             const vctmName = vctmData.name;
+            const formats = vctmData.formats || { vctm: { data: vctmData.vctm } };
             
-            // Write raw VCTM JSON
+            // Build list of available formats for the template
+            const availableFormats = [];
+            
+            // Always write VCTM JSON (backwards compat: name.json)
             fs.writeFileSync(
                 path.join(orgDir, `${vctmName}.json`),
                 JSON.stringify(vctmData.vctm, null, 2)
             );
             console.log(`Generated ${orgName}/${vctmName}.json`);
+            availableFormats.push({
+                name: 'vctm',
+                label: 'SD-JWT VC Type Metadata',
+                file: `${vctmName}.json`,
+                extension: '.json'
+            });
+            
+            // Also write with new naming convention (name.vctm.json) for consistency
+            fs.writeFileSync(
+                path.join(orgDir, `${vctmName}.vctm.json`),
+                JSON.stringify(vctmData.vctm, null, 2)
+            );
+            
+            // Write mDOC format if available
+            if (formats.mdoc) {
+                fs.writeFileSync(
+                    path.join(orgDir, `${vctmName}.mdoc.json`),
+                    JSON.stringify(formats.mdoc.data, null, 2)
+                );
+                console.log(`Generated ${orgName}/${vctmName}.mdoc.json`);
+                availableFormats.push({
+                    name: 'mdoc',
+                    label: 'mso_mdoc (ISO 18013-5)',
+                    file: `${vctmName}.mdoc.json`,
+                    extension: '.mdoc.json',
+                    data: formats.mdoc.data
+                });
+            }
+            
+            // Write W3C VC format if available
+            if (formats.vc) {
+                fs.writeFileSync(
+                    path.join(orgDir, `${vctmName}.vc.json`),
+                    JSON.stringify(formats.vc.data, null, 2)
+                );
+                console.log(`Generated ${orgName}/${vctmName}.vc.json`);
+                availableFormats.push({
+                    name: 'vc',
+                    label: 'W3C Verifiable Credential',
+                    file: `${vctmName}.vc.json`,
+                    extension: '.vc.json',
+                    data: formats.vc.data
+                });
+            }
             
             // Write HTML detail page
             if (templates.vctm) {
@@ -502,6 +624,10 @@ async function build() {
                     name: vctmName,
                     jsonUrl: `${vctmName}.json`,
                     rawJson: JSON.stringify(vctmData.vctm, null, 2),
+                    availableFormats,
+                    hasMultipleFormats: availableFormats.length > 1,
+                    mdoc: formats.mdoc?.data,
+                    vc: formats.vc?.data,
                     buildTime
                 });
                 fs.writeFileSync(path.join(orgDir, `${vctmName}.html`), vctmHtml);
