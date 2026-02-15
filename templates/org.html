@@ -9,44 +9,24 @@
             <section class="org-header">
                 <h1>{{org.name}}</h1>
                 <p class="org-meta">
-                    {{vctms.length}} VCTM{{#unless (eq vctms.length 1)}}s{{/unless}} registered
+                    {{vctms.length}} credential{{#unless (eq vctms.length 1)}}s{{/unless}} registered
                 </p>
             </section>
 
             <section class="vctm-list">
-                <h2>Verifiable Credential Types</h2>
+                <h2>Credentials</h2>
                 <div class="vctm-grid">
                     {{#each vctms}}
-                    <div class="vctm-card">
-                        <h3>
-                            <a href="/{{../org.name}}/{{name}}.html">
-                                {{#if vctm.name}}{{vctm.name}}{{else}}{{name}}{{/if}}
-                            </a>
-                        </h3>
+                    <a href="/{{../org.name}}/{{name}}.html" class="vctm-card">
+                        <h3>{{#if vctm.name}}{{vctm.name}}{{else}}{{name}}{{/if}}</h3>
                         {{#if vctm.description}}
                         <p class="vctm-description">{{vctm.description}}</p>
                         {{/if}}
                         <dl class="vctm-meta">
                             <dt>VCT URI</dt>
                             <dd><code>{{vctm.vct}}</code></dd>
-                            {{#if source.repo}}
-                            <dt>Source</dt>
-                            <dd>
-                                <a href="{{source.url}}" target="_blank">
-                                    {{source.owner}}/{{source.repoName}}
-                                </a>
-                            </dd>
-                            {{/if}}
                         </dl>
-                        <div class="vctm-actions">
-                            <a href="/{{../org.name}}/{{name}}.json" class="btn btn-secondary">
-                                View JSON
-                            </a>
-                            <a href="/{{../org.name}}/{{name}}.html" class="btn btn-primary">
-                                Details
-                            </a>
-                        </div>
-                    </div>
+                    </a>
                     {{/each}}
                 </div>
             </section>

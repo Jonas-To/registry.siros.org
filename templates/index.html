@@ -13,7 +13,7 @@
                     </div>
                     <div class="stat">
                         <span class="stat-value">{{totalVctms}}</span>
-                        <span class="stat-label">VCTMs</span>
+                        <span class="stat-label">Credentials</span>
                     </div>
                 </div>
                 <div class="hero-actions">
@@ -28,7 +28,7 @@
                     {{#each orgs}}
                     <a href="/{{name}}/" class="card">
                         <h3>{{name}}</h3>
-                        <p class="vctm-count">{{vctmCount}} VCTM{{#unless (eq vctmCount 1)}}s{{/unless}}</p>
+                        <p class="vctm-count">{{vctmCount}} credential{{#unless (eq vctmCount 1)}}s{{/unless}}</p>
                         <ul class="vctm-preview">
                             {{#each vctms}}
                             {{#if @first}}
@@ -43,7 +43,7 @@
                     {{/each}}
                 </div>
                 {{else}}
-                <p class="empty-state">No VCTMs registered yet. <a href="https://github.com/sirosfoundation/registry.siros.org">Learn how to register.</a></p>
+                <p class="empty-state">No credentials registered yet. <a href="docs/register.html">Learn how to publish.</a></p>
                 {{/if}}
             </section>
 

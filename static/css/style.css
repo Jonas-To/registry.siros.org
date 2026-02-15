@@ -219,21 +219,25 @@ main {
 }
 
 .vctm-card {
+    display: block;
     background-color: var(--color-surface);
     border: 1px solid var(--color-border);
     border-radius: var(--border-radius);
     padding: 1.5rem;
     box-shadow: var(--shadow);
-    display: flex;
-    flex-direction: column;
-    height: 100%;
+    transition: box-shadow 0.2s, transform 0.2s;
+    text-decoration: none;
+    color: inherit;
+}
+
+.vctm-card:hover {
+    box-shadow: var(--shadow-hover);
+    transform: translateY(-2px);
+    text-decoration: none;
 }
 
 .vctm-card h3 {
     margin: 0 0 0.5rem;
-}
-
-.vctm-card h3 a {
     color: var(--color-text);
 }
 
@@ -255,12 +259,6 @@ main {
 
 .vctm-meta dd {
     margin: 0 0 0.5rem;
-}
-
-.vctm-actions {
-    display: flex;
-    gap: 0.75rem;
-    margin-top: auto;
 }
 
 /* Buttons */
