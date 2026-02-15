@@ -153,37 +153,46 @@
                         </section>
                         
                         <section class="info-section">
-                            <h2>SD-JWT VC Type Metadata (VCTM)</h2>
-                            <pre><code class="language-json">{{{rawJson}}}</code></pre>
+                            <h2>Format Specifications</h2>
+                            <div class="format-tabs">
+                                <div class="tab-nav">
+                                    <button class="tab-btn active" data-tab="vctm">SD-JWT VC</button>
+                                    {{#if mdoc}}<button class="tab-btn" data-tab="mdoc">mso_mdoc</button>{{/if}}
+                                    {{#if vc}}<button class="tab-btn" data-tab="vc">W3C VC</button>{{/if}}
+                                </div>
+                                <div class="tab-content">
+                                    <div class="tab-pane active" id="tab-vctm">
+                                        <p class="format-description">SD-JWT VC Type Metadata (IETF draft-ietf-oauth-sd-jwt-vc)</p>
+                                        <pre><code class="language-json">{{{rawJson}}}</code></pre>
+                                    </div>
+                                    {{#if mdoc}}
+                                    <div class="tab-pane" id="tab-mdoc">
+                                        <p class="format-description">OpenID4VCI credential configuration for ISO 18013-5 mobile documents</p>
+                                        <pre><code class="language-json">{{{mdocJson}}}</code></pre>
+                                    </div>
+                                    {{/if}}
+                                    {{#if vc}}
+                                    <div class="tab-pane" id="tab-vc">
+                                        <p class="format-description">W3C VCDM 2.0 JSON Schema</p>
+                                        <pre><code class="language-json">{{{vcJson}}}</code></pre>
+                                    </div>
+                                    {{/if}}
+                                </div>
+                            </div>
                         </section>
-                        
-                        {{#if mdoc}}
-                        <section class="info-section">
-                            <h2>mso_mdoc Configuration</h2>
-                            <p class="format-description">OpenID4VCI credential configuration for ISO 18013-5 mobile documents</p>
-                            <dl class="format-meta">
-                                {{#if mdoc.doctype}}
-                                <dt>DocType</dt>
-                                <dd><code>{{mdoc.doctype}}</code></dd>
-                                {{/if}}
-                            </dl>
-                        </section>
-                        {{/if}}
-                        
-                        {{#if vc}}
-                        <section class="info-section">
-                            <h2>W3C Verifiable Credential Schema</h2>
-                            <p class="format-description">W3C VCDM 2.0 JSON Schema</p>
-                            <dl class="format-meta">
-                                {{#if vc.type}}
-                                <dt>Type</dt>
-                                <dd><code>{{vc.type}}</code></dd>
-                                {{/if}}
-                            </dl>
-                        </section>
-                        {{/if}}
                     </div>
                 </div>
             </section>
         </div>
+        <script>
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const tabId = btn.dataset.tab;
+                    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+                    document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+                    btn.classList.add('active');
+                    document.getElementById('tab-' + tabId).classList.add('active');
+                });
+            });
+        </script>
 {{> footer}}

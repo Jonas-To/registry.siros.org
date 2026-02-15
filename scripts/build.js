@@ -627,7 +627,9 @@ async function build() {
                     availableFormats,
                     hasMultipleFormats: availableFormats.length > 1,
                     mdoc: formats.mdoc?.data,
+                    mdocJson: formats.mdoc ? JSON.stringify(formats.mdoc.data, null, 2) : null,
                     vc: formats.vc?.data,
+                    vcJson: formats.vc ? JSON.stringify(formats.vc.data, null, 2) : null,
                     buildTime
                 });
                 fs.writeFileSync(path.join(orgDir, `${vctmName}.html`), vctmHtml);
