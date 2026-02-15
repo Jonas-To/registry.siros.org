@@ -77,6 +77,10 @@ A verifiable credential for identity verification.
                                 <td><code>background_image</code></td>
                                 <td>URI for a background image</td>
                             </tr>
+                            <tr>
+                                <td><code>doctype</code></td>
+                                <td>mso_mdoc document type identifier (e.g., "org.iso.18013.5.1.mDL")</td>
+                            </tr>
                         </tbody>
                     </table>
                 </section>
@@ -354,12 +358,46 @@ mtcvctm batch --input ./credentials --output ./vctm --base-url https://example.c
                 </section>
 
                 <section class="docs-section">
+                    <h2>Multi-Format Output</h2>
+                    <p>
+                        mtcvctm generates three credential format specifications from each Markdown file:
+                    </p>
+                    <ul>
+                        <li><strong>SD-JWT VC Type Metadata</strong> (<code>.vctm.json</code>) - IETF draft-ietf-oauth-sd-jwt-vc specification</li>
+                        <li><strong>mso_mdoc Configuration</strong> (<code>.mdoc.json</code>) - ISO 18013-5 mobile document format for OpenID4VCI</li>
+                        <li><strong>W3C VCDM 2.0 Schema</strong> (<code>.vc.json</code>) - W3C Verifiable Credentials Data Model 2.0</li>
+                    </ul>
+                    <p>
+                        All formats are derived from the same Markdown source, ensuring consistency across 
+                        different credential implementations. Use the <code>doctype</code> front matter property 
+                        to specify the mso_mdoc document type identifier when needed.
+                    </p>
+                    <h3>Example with mso_mdoc DocType</h3>
+                    <pre><code>---
+vct: https://example.com/credentials/mdl
+doctype: org.iso.18013.5.1.mDL
+background_color: "#003366"
+---
+
+# Mobile Driver's License
+
+A verifiable mobile driver's license credential.
+
+## Claims
+
+- `family_name` "Family Name" (string): Family name [mandatory]
+- `given_name` "Given Name" (string): Given name [mandatory]
+- `birth_date` "Date of Birth" (date): Date of birth [sd=always]</code></pre>
+                </section>
+
+                <section class="docs-section">
                     <h2>References</h2>
                     <ul>
                         <li><a href="https://github.com/sirosfoundation/mtcvctm" target="_blank">mtcvctm on GitHub</a></li>
                         <li><a href="https://datatracker.ietf.org/doc/html/draft-ietf-oauth-sd-jwt-vc" target="_blank">SD-JWT VC Specification</a></li>
                         <li><a href="/docs/github-action.html">GitHub Action Setup</a></li>
                         <li><a href="/docs/register.html">Register Your Credentials</a></li>
+                        <li><a href="/docs/support.html">Support &amp; Contributing</a></li>
                     </ul>
                 </section>
 

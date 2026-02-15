@@ -17,12 +17,14 @@
                     <h2>Overview</h2>
                     <p>
                         <a href="https://github.com/sirosfoundation/mtcvctm" target="_blank" class="btn btn-primary">View on GitHub</a>
+                        <a href="{{rootPath}}docs/support.html" class="btn">Report Issues</a>
                     </p>
                     <p>
                         The <code>mtcvctm</code> GitHub Action automates the process of:
                     </p>
                     <ul>
                         <li>Converting Markdown credential documentation to VCTM JSON</li>
+                        <li><strong>Generating multiple output formats:</strong> SD-JWT VC (VCTM), mso_mdoc (ISO 18013-5), and W3C VCDM 2.0</li>
                         <li>Maintaining a dedicated <code>vctm</code> branch with generated files</li>
                         <li>Creating the registry manifest for discovery</li>
                         <li>Keeping VCTMs synchronized with your documentation</li>
@@ -169,9 +171,52 @@ organization:
 ├── .well-known/
 │   └── vctm-registry.json    # Registry manifest
 ├── credentials/
-│   ├── IdentityCredential.json
-│   └── MembershipCredential.json
+│   ├── IdentityCredential.vctm.json   # SD-JWT VC Type Metadata
+│   ├── IdentityCredential.mdoc.json   # mso_mdoc (ISO 18013-5)
+│   ├── IdentityCredential.vc.json     # W3C VCDM 2.0 Schema
+│   ├── MembershipCredential.vctm.json
+│   ├── MembershipCredential.mdoc.json
+│   └── MembershipCredential.vc.json
 └── README.md                  # Auto-generated documentation</code></pre>
+                </section>
+
+                <section class="docs-section">
+                    <h2>Multi-Format Output</h2>
+                    <p>
+                        mtcvctm automatically generates three credential format specifications from each 
+                        Markdown source file:
+                    </p>
+                    <table class="docs-table">
+                        <thead>
+                            <tr>
+                                <th>Format</th>
+                                <th>Extension</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>SD-JWT VC</strong></td>
+                                <td><code>.vctm.json</code></td>
+                                <td>SD-JWT VC Type Metadata (IETF draft-ietf-oauth-sd-jwt-vc)</td>
+                            </tr>
+                            <tr>
+                                <td><strong>mso_mdoc</strong></td>
+                                <td><code>.mdoc.json</code></td>
+                                <td>ISO 18013-5 mobile document configuration for OpenID4VCI</td>
+                            </tr>
+                            <tr>
+                                <td><strong>W3C VC</strong></td>
+                                <td><code>.vc.json</code></td>
+                                <td>W3C Verifiable Credential Data Model 2.0 JSON Schema</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <p>
+                        All three formats are derived from the same Markdown source, ensuring consistency 
+                        across credential implementations. Format-specific options can be configured via 
+                        front matter (see <a href="{{rootPath}}docs/markdown-format.html">Markdown Format</a>).
+                    </p>
                 </section>
 
                 <section class="docs-section">
@@ -303,6 +348,12 @@ mtcvctm registry -i dist/vctm -o dist/vctm/.well-known/vctm-registry.json</code>
                                 Registry Documentation
                             </a>
                             - How to register your VCTMs
+                        </li>
+                        <li>
+                            <a href="{{rootPath}}docs/support.html">
+                                Support &amp; Contributing
+                            </a>
+                            - Report issues and contribute
                         </li>
                     </ul>
                 </section>

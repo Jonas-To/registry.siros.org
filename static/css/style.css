@@ -819,6 +819,45 @@ section h2 {
     white-space: nowrap;
 }
 
+/* Issue Cards */
+.issue-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+    margin: 1.5rem 0;
+}
+
+.issue-card {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--border-radius);
+    padding: 1.5rem;
+}
+
+.issue-card h3 {
+    font-size: 1.125rem;
+    margin: 0 0 0.75rem;
+}
+
+.issue-card p {
+    color: var(--color-text-muted);
+    margin-bottom: 1rem;
+}
+
+.issue-card ul {
+    margin-bottom: 1.5rem;
+    padding-left: 1.25rem;
+}
+
+.issue-card li {
+    margin-bottom: 0.25rem;
+    font-size: 0.9rem;
+}
+
+.issue-card .btn {
+    display: inline-block;
+}
+
 /* Badge Generator */
 .badge-preview {
     background: var(--color-background);
