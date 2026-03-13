@@ -18,3 +18,13 @@ The generated site should be branded to the siros brand and should organize VCTM
 
 The html view should be responsive, clean and allow for drilldown into information about the source, owner and history of the published VCTMs
 
+## VCTM Publication
+
+Repositories can publish VCTMs using the mtcvctm GitHub Action, which supports:
+
+- **Markdown-based authoring** - Convert markdown credential definitions to VCTM JSON
+- **Raw JSON publication** - Publish existing VCTM JSON files directly
+- **Normalization rules** - Automatic fixing of legacy field names and missing fields
+
+See [Publishing VCTM Files](publishing.md) for detailed documentation on publishing workflows and normalization.
+
