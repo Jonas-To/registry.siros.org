@@ -41,7 +41,9 @@
                     <nav class="primary-tab-nav">
                         <button class="primary-tab-btn active" data-primary-tab="overview">Overview</button>
                         {{#if vctm.claims}}<button class="primary-tab-btn" data-primary-tab="claims">Claims ({{vctm.claims.length}})</button>{{/if}}
-                        <button class="primary-tab-btn" data-primary-tab="json">JSON</button>
+                        <button class="primary-tab-btn" data-primary-tab="sd-jwt">SD-JWT</button>
+                        {{#if mdoc}}<button class="primary-tab-btn" data-primary-tab="mdoc">mso_mdoc</button>{{/if}}
+                        {{#if vc}}<button class="primary-tab-btn" data-primary-tab="vc">W3C VC</button>{{/if}}
                     </nav>
 
                     <!-- Overview Tab -->
@@ -183,36 +185,33 @@
                     </div>
                     {{/if}}
 
-                    <!-- JSON Tab -->
-                    <div class="primary-tab-pane" id="primary-tab-json">
+                    <!-- SD-JWT Tab -->
+                    <div class="primary-tab-pane" id="primary-tab-sd-jwt">
                         <section class="info-section">
-                            <div class="format-tabs">
-                                <div class="tab-nav">
-                                    <button class="tab-btn active" data-tab="vctm">SD-JWT VC</button>
-                                    {{#if mdoc}}<button class="tab-btn" data-tab="mdoc">mso_mdoc</button>{{/if}}
-                                    {{#if vc}}<button class="tab-btn" data-tab="vc">W3C VC</button>{{/if}}
-                                </div>
-                                <div class="tab-content">
-                                    <div class="tab-pane active" id="tab-vctm">
-                                        <p class="format-description">SD-JWT VC Type Metadata (IETF draft-ietf-oauth-sd-jwt-vc)</p>
-                                        <pre><code class="language-json">{{{rawJson}}}</code></pre>
-                                    </div>
-                                    {{#if mdoc}}
-                                    <div class="tab-pane" id="tab-mdoc">
-                                        <p class="format-description">OpenID4VCI credential configuration for ISO 18013-5 mobile documents</p>
-                                        <pre><code class="language-json">{{{mdocJson}}}</code></pre>
-                                    </div>
-                                    {{/if}}
-                                    {{#if vc}}
-                                    <div class="tab-pane" id="tab-vc">
-                                        <p class="format-description">W3C VCDM 2.0 JSON Schema</p>
-                                        <pre><code class="language-json">{{{vcJson}}}</code></pre>
-                                    </div>
-                                    {{/if}}
-                                </div>
-                            </div>
+                            <p class="format-description">SD-JWT VC Type Metadata (IETF draft-ietf-oauth-sd-jwt-vc)</p>
+                            <pre><code class="language-json">{{{rawJson}}}</code></pre>
                         </section>
                     </div>
+
+                    {{#if mdoc}}
+                    <!-- mso_mdoc Tab -->
+                    <div class="primary-tab-pane" id="primary-tab-mdoc">
+                        <section class="info-section">
+                            <p class="format-description">OpenID4VCI credential configuration for ISO 18013-5 mobile documents</p>
+                            <pre><code class="language-json">{{{mdocJson}}}</code></pre>
+                        </section>
+                    </div>
+                    {{/if}}
+
+                    {{#if vc}}
+                    <!-- W3C VC Tab -->
+                    <div class="primary-tab-pane" id="primary-tab-vc">
+                        <section class="info-section">
+                            <p class="format-description">W3C VCDM 2.0 JSON Schema</p>
+                            <pre><code class="language-json">{{{vcJson}}}</code></pre>
+                        </section>
+                    </div>
+                    {{/if}}
                 </div>
             </section>
         </div>
@@ -225,16 +224,6 @@
                     document.querySelectorAll('.primary-tab-pane').forEach(p => p.classList.remove('active'));
                     btn.classList.add('active');
                     document.getElementById('primary-tab-' + tabId).classList.add('active');
-                });
-            });
-            // Format sub-tabs (within JSON tab)
-            document.querySelectorAll('.tab-btn').forEach(btn => {
-                btn.addEventListener('click', () => {
-                    const tabId = btn.dataset.tab;
-                    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-                    document.querySelectorAll('.format-tabs .tab-pane').forEach(p => p.classList.remove('active'));
-                    btn.classList.add('active');
-                    document.getElementById('tab-' + tabId).classList.add('active');
                 });
             });
         </script>
