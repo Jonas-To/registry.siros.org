@@ -357,6 +357,7 @@ async function fetchRepoVCTMs(repo) {
         
         return {
             name: file.name || baseName,
+            slug: baseName,  // filesystem-safe identifier for filenames
             path: actualVctmPath,
             vctm,
             formats,
@@ -563,42 +564,43 @@ async function build() {
         
         // Individual VCTM pages and JSON files
         for (const vctmData of org.vctms) {
-            const vctmName = vctmData.name;
+            const vctmSlug = vctmData.slug;  // filesystem-safe identifier
+            const vctmDisplayName = vctmData.name;  // human-readable name
             const formats = vctmData.formats || { vctm: { data: vctmData.vctm } };
             
             // Build list of available formats for the template
             const availableFormats = [];
             
-            // Always write VCTM JSON (backwards compat: name.json)
+            // Always write VCTM JSON (backwards compat: slug.json)
             fs.writeFileSync(
-                path.join(orgDir, `${vctmName}.json`),
+                path.join(orgDir, `${vctmSlug}.json`),
                 JSON.stringify(vctmData.vctm, null, 2)
             );
-            console.log(`Generated ${orgName}/${vctmName}.json`);
+            console.log(`Generated ${orgName}/${vctmSlug}.json`);
             availableFormats.push({
                 name: 'vctm',
                 label: 'SD-JWT VC Type Metadata',
-                file: `${vctmName}.json`,
+                file: `${vctmSlug}.json`,
                 extension: '.json'
             });
             
-            // Also write with new naming convention (name.vctm.json) for consistency
+            // Also write with new naming convention (slug.vctm.json) for consistency
             fs.writeFileSync(
-                path.join(orgDir, `${vctmName}.vctm.json`),
+                path.join(orgDir, `${vctmSlug}.vctm.json`),
                 JSON.stringify(vctmData.vctm, null, 2)
             );
             
             // Write mDOC format if available
             if (formats.mdoc) {
                 fs.writeFileSync(
-                    path.join(orgDir, `${vctmName}.mdoc.json`),
+                    path.join(orgDir, `${vctmSlug}.mdoc.json`),
                     JSON.stringify(formats.mdoc.data, null, 2)
                 );
-                console.log(`Generated ${orgName}/${vctmName}.mdoc.json`);
+                console.log(`Generated ${orgName}/${vctmSlug}.mdoc.json`);
                 availableFormats.push({
                     name: 'mdoc',
                     label: 'mso_mdoc (ISO 18013-5)',
-                    file: `${vctmName}.mdoc.json`,
+                    file: `${vctmSlug}.mdoc.json`,
                     extension: '.mdoc.json',
                     data: formats.mdoc.data
                 });
@@ -607,14 +609,14 @@ async function build() {
             // Write W3C VC format if available
             if (formats.vc) {
                 fs.writeFileSync(
-                    path.join(orgDir, `${vctmName}.vc.json`),
+                    path.join(orgDir, `${vctmSlug}.vc.json`),
                     JSON.stringify(formats.vc.data, null, 2)
                 );
-                console.log(`Generated ${orgName}/${vctmName}.vc.json`);
+                console.log(`Generated ${orgName}/${vctmSlug}.vc.json`);
                 availableFormats.push({
                     name: 'vc',
                     label: 'W3C Verifiable Credential',
-                    file: `${vctmName}.vc.json`,
+                    file: `${vctmSlug}.vc.json`,
                     extension: '.vc.json',
                     data: formats.vc.data
                 });
@@ -623,13 +625,14 @@ async function build() {
             // Write HTML detail page
             if (templates.vctm) {
                 const vctmHtml = templates.vctm({
-                    title: `${vctmData.vctm.name || vctmName} - VCTM Registry`,
+                    title: `${vctmData.vctm.name || vctmDisplayName} - VCTM Registry`,
                     rootPath: '../',
                     vctm: vctmData.vctm,
                     source: vctmData.source,
                     org: orgName,
-                    name: vctmName,
-                    jsonUrl: `${vctmName}.json`,
+                    name: vctmDisplayName,
+                    slug: vctmSlug,
+                    jsonUrl: `${vctmSlug}.json`,
                     rawJson: JSON.stringify(vctmData.vctm, null, 2),
                     availableFormats,
                     hasMultipleFormats: availableFormats.length > 1,
@@ -639,8 +642,8 @@ async function build() {
                     vcJson: formats.vc ? JSON.stringify(formats.vc.data, null, 2) : null,
                     buildTime
                 });
-                fs.writeFileSync(path.join(orgDir, `${vctmName}.html`), vctmHtml);
-                console.log(`Generated ${orgName}/${vctmName}.html`);
+                fs.writeFileSync(path.join(orgDir, `${vctmSlug}.html`), vctmHtml);
+                console.log(`Generated ${orgName}/${vctmSlug}.html`);
             }
         }
     }
@@ -659,7 +662,7 @@ async function build() {
     // Build comprehensive credentials list with format-specific links
     const credentials = Object.values(byOrg).flatMap(org => 
         org.vctms.map(v => {
-            const basePath = `/${org.name}/${encodeURIComponent(v.name)}`;
+            const basePath = `/${org.name}/${v.slug}`;  // Use slug for filesystem-safe URLs
             const formats = {};
             
             // SD-JWT VC Type Metadata (always present)
