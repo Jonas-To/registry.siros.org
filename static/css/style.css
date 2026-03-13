@@ -16,6 +16,9 @@
     --border-radius: 8px;
     --shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     --shadow-hover: 0 4px 12px rgba(0, 0, 0, 0.15);
+    --svg-template-placeholder-scale: 0.85;
+    --svg-template-placeholder-scale-compact: 0.78;
+    --svg-template-placeholder-scale-full: 0.90;
 }
 
 /* Reset */

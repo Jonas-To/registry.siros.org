@@ -1,7 +1,7 @@
 {
   "name": "registry.siros.org",
   "version": "0.1.0",
-  "description": "Static site builder for VCTM registry at registry.siros.org",
+  "description": "Static site builder for Credential Type Registry at registry.siros.org",
   "main": "scripts/build.js",
   "scripts": {
     "build": "node scripts/build.js",

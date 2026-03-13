@@ -226,5 +226,111 @@
                     document.getElementById('primary-tab-' + tabId).classList.add('active');
                 });
             });
+
+            const parseFontSize = (value) => {
+                const match = String(value || '').trim().match(/^([0-9]*\.?[0-9]+)([a-z%]*)$/i);
+                if (!match) return null;
+                return { size: parseFloat(match[1]), unit: match[2] || '' };
+            };
+
+            const scaleFontSize = (value, factor) => {
+                const parsed = parseFontSize(value);
+                if (!parsed) return null;
+                return `${Number((parsed.size * factor).toFixed(2))}${parsed.unit}`;
+            };
+
+            const decodeBase64Utf8 = (base64) => {
+                const binary = atob(base64);
+                const bytes = new Uint8Array(binary.length);
+                for (let i = 0; i < binary.length; i++) {
+                    bytes[i] = binary.charCodeAt(i);
+                }
+                return new TextDecoder().decode(bytes);
+            };
+
+            const encodeBase64Utf8 = (text) => {
+                const bytes = new TextEncoder().encode(text);
+                let binary = '';
+                for (let i = 0; i < bytes.length; i++) {
+                    binary += String.fromCharCode(bytes[i]);
+                }
+                return btoa(binary);
+            };
+
+            const shrinkTemplateStringFonts = () => {
+                const rootStyles = getComputedStyle(document.documentElement);
+                const readScale = (name, fallback) => {
+                    const value = parseFloat(rootStyles.getPropertyValue(name));
+                    return Number.isFinite(value) && value > 0 && value < 1 ? value : fallback;
+                };
+
+                const baseScale = readScale('--svg-template-placeholder-scale', 0.85);
+                const compactScale = readScale('--svg-template-placeholder-scale-compact', baseScale);
+                const fullScale = readScale('--svg-template-placeholder-scale-full', baseScale);
+                const compactCardWidthThreshold = 360;
+
+                document.querySelectorAll('.svg-template-object').forEach(img => {
+                    if (img.dataset.templateFontScaled === 'true') return;
+
+                    const card = img.closest('.svg-template-card');
+                    const cardWidth = card ? card.getBoundingClientRect().width : 0;
+                    const overrideScale = card ? parseFloat(card.dataset.placeholderScale) : NaN;
+                    const shrinkFactor = Number.isFinite(overrideScale) && overrideScale > 0 && overrideScale < 1
+                        ? overrideScale
+                        : (cardWidth > 0 && cardWidth <= compactCardWidthThreshold ? compactScale : fullScale);
+
+                    const src = img.getAttribute('src') || '';
+                    if (!src.startsWith('data:image/svg+xml')) return;
+
+                    const commaIndex = src.indexOf(',');
+                    if (commaIndex < 0) return;
+
+                    const metadata = src.slice(0, commaIndex);
+                    const payload = src.slice(commaIndex + 1);
+                    const isBase64 = metadata.includes(';base64');
+
+                    let svgText;
+                    try {
+                        svgText = isBase64 ? decodeBase64Utf8(payload) : decodeURIComponent(payload);
+                    } catch {
+                        return;
+                    }
+
+                    const doc = new DOMParser().parseFromString(svgText, 'image/svg+xml');
+                    const textNodes = Array.from(doc.querySelectorAll('text')).filter(node => /\{\{[^}]+\}\}/.test(node.textContent || ''));
+                    if (!textNodes.length) return;
+
+                    textNodes.forEach(node => {
+                        const attrSize = node.getAttribute('font-size');
+                        if (attrSize) {
+                            const scaledAttr = scaleFontSize(attrSize, shrinkFactor);
+                            if (scaledAttr) {
+                                node.setAttribute('font-size', scaledAttr);
+                                return;
+                            }
+                        }
+
+                        const style = node.getAttribute('style') || '';
+                        const styleMatch = style.match(/font-size\s*:\s*([0-9]*\.?[0-9]+[a-z%]*)/i);
+                        if (styleMatch) {
+                            const scaledStyle = scaleFontSize(styleMatch[1], shrinkFactor);
+                            if (scaledStyle) {
+                                node.setAttribute('style', style.replace(styleMatch[1], scaledStyle));
+                                return;
+                            }
+                        }
+
+                        node.setAttribute('font-size', `${Math.round(shrinkFactor * 100)}%`);
+                    });
+
+                    const serialized = new XMLSerializer().serializeToString(doc.documentElement);
+                    img.setAttribute('src', isBase64
+                        ? `data:image/svg+xml;base64,${encodeBase64Utf8(serialized)}`
+                        : `data:image/svg+xml,${encodeURIComponent(serialized)}`);
+                    img.dataset.templateFontScaled = 'true';
+                });
+            };
+
+            shrinkTemplateStringFonts();
         </script>
 {{> footer}}

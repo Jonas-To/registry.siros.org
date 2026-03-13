@@ -267,7 +267,7 @@ async function loadRepositories() {
 }
 
 /**
- * Fetch VCTM registry from a repository's vctm branch
+ * Fetch credential type registry from a repository's vctm branch
  */
 async function fetchRepoVCTMs(repo) {
     const [owner, name] = repo.split('/');
@@ -517,7 +517,7 @@ async function build() {
     
     if (templates.index) {
         const indexHtml = templates.index({
-            title: 'VCTM Registry',
+            title: 'Credential Type Registry',
             rootPath: './',
             orgs,
             totalVctms,
@@ -535,7 +535,7 @@ async function build() {
         
         for (const [name, template] of Object.entries(templates.docs)) {
             const html = template({
-                title: `${name.charAt(0).toUpperCase() + name.slice(1).replace(/-/g, ' ')} - VCTM Registry`,
+                title: `${name.charAt(0).toUpperCase() + name.slice(1).replace(/-/g, ' ')} - Credential Type Registry`,
                 rootPath: '../',
                 buildTime
             });
@@ -552,7 +552,7 @@ async function build() {
         // Org index page
         if (templates.org) {
             const orgHtml = templates.org({
-                title: `${orgName} - VCTM Registry`,
+                title: `${orgName} - Credential Type Registry`,
                 rootPath: '../',
                 org,
                 vctms: org.vctms,
@@ -625,7 +625,7 @@ async function build() {
             // Write HTML detail page
             if (templates.vctm) {
                 const vctmHtml = templates.vctm({
-                    title: `${vctmData.vctm.name || vctmDisplayName} - VCTM Registry`,
+                    title: `${vctmData.vctm.name || vctmDisplayName} - Credential Type Registry`,
                     rootPath: '../',
                     vctm: vctmData.vctm,
                     source: vctmData.source,

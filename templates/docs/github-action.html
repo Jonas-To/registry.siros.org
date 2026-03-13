@@ -23,11 +23,11 @@
                         The <code>mtcvctm</code> GitHub Action automates the process of:
                     </p>
                     <ul>
-                        <li>Converting Markdown credential documentation to VCTM JSON</li>
+                        <li>Converting Markdown credential documentation to credential metadata JSON</li>
                         <li><strong>Generating multiple output formats:</strong> SD-JWT VC (VCTM), mso_mdoc (ISO 18013-5), and W3C VCDM 2.0</li>
                         <li>Maintaining a dedicated <code>vctm</code> branch with generated files</li>
                         <li>Creating the registry manifest for discovery</li>
-                        <li>Keeping VCTMs synchronized with your documentation</li>
+                        <li>Keeping credential metadata synchronized with your documentation</li>
                     </ul>
                 </section>
 
@@ -36,7 +36,7 @@
                     <p>
                         Create <code>.github/workflows/vctm.yml</code> in your repository:
                     </p>
-                    <pre><code>name: Generate VCTMs
+                    <pre><code>name: Generate Credential Metadata
 
 on:
   push:
@@ -54,7 +54,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       
-      - name: Generate VCTMs
+    - name: Generate Credential Metadata
         uses: sirosfoundation/mtcvctm-action@v1
         with:
           input-dir: credentials
@@ -84,7 +84,7 @@ jobs:
                                 <td><code>output-branch</code></td>
                                 <td>No</td>
                                 <td><code>vctm</code></td>
-                                <td>Branch to publish generated VCTMs to</td>
+                                <td>Branch to publish generated credential metadata to</td>
                             </tr>
                             <tr>
                                 <td><code>base-url</code></td>
@@ -224,7 +224,7 @@ organization:
                     <p>
                         For organizations with staging and production environments:
                     </p>
-                    <pre><code>name: Generate VCTMs
+                    <pre><code>name: Generate Credential Metadata
 
 on:
   push:
@@ -249,7 +249,7 @@ jobs:
             echo "branch=vctm-staging" >> $GITHUB_OUTPUT
           fi
       
-      - name: Generate VCTMs
+    - name: Generate Credential Metadata
         uses: sirosfoundation/mtcvctm-action@v1
         with:
           input-dir: credentials
@@ -266,7 +266,7 @@ jobs:
                     <pre><code># Install mtcvctm
 go install github.com/sirosfoundation/mtcvctm@latest
 
-# Generate VCTMs
+# Generate credential metadata
 mtcvctm generate -i credentials -o dist/vctm -b https://example.com/credentials
 
 # Generate registry manifest
@@ -286,7 +286,7 @@ mtcvctm registry -i dist/vctm -o dist/vctm/.well-known/vctm-registry.json</code>
                     <pre><code>permissions:
   contents: write</code></pre>
 
-                    <h3>VCTMs not updating</h3>
+                    <h3>Credential metadata not updating</h3>
                     <p>
                         Check that your <code>paths</code> filter includes all relevant files:
                     </p>
@@ -296,7 +296,7 @@ mtcvctm registry -i dist/vctm -o dist/vctm/.well-known/vctm-registry.json</code>
       - 'credentials/**/*.md'
       - 'mtcvctm.yaml'</code></pre>
 
-                    <h3>Invalid VCTM generated</h3>
+                    <h3>Invalid credential metadata generated</h3>
                     <p>
                         Validate your Markdown front matter matches the expected schema.
                         Run locally to debug:
@@ -307,14 +307,14 @@ mtcvctm registry -i dist/vctm -o dist/vctm/.well-known/vctm-registry.json</code>
                 <section class="docs-section">
                     <h2>Next Steps</h2>
                     <p>
-                        Once your GitHub Action is set up and generating VCTMs:
+                        Once your GitHub Action is set up and generating credential metadata:
                     </p>
                     <ol>
                         <li>
-                            Verify the <code>vctm</code> branch exists and contains valid VCTM files
+                            Verify the <code>vctm</code> branch exists and contains valid credential metadata files
                         </li>
                         <li>
-                            Check that <code>.well-known/vctm-registry.json</code> lists all your VCTMs
+                            Check that <code>.well-known/vctm-registry.json</code> lists all your credential types
                         </li>
                         <li>
                             <a href="/docs/register.html">Register your repository</a> with the SIROS Registry
@@ -341,13 +341,13 @@ mtcvctm registry -i dist/vctm -o dist/vctm/.well-known/vctm-registry.json</code>
                             <a href="https://datatracker.ietf.org/doc/draft-ietf-oauth-sd-jwt-vc/" target="_blank">
                                 SD-JWT VC Specification
                             </a>
-                            - VCTM format reference
+                            - SD-JWT VC type metadata reference
                         </li>
                         <li>
                             <a href="{{rootPath}}docs/register.html">
                                 Registry Documentation
                             </a>
-                            - How to register your VCTMs
+                            - How to register your credential types
                         </li>
                         <li>
                             <a href="{{rootPath}}docs/support.html">
@@ -370,7 +370,7 @@ mtcvctm registry -i dist/vctm -o dist/vctm/.well-known/vctm-registry.json</code>
                     </blockquote>
                     <p>
                         The tool transforms human-readable Markdown documentation into machine-readable 
-                        VCTM JSON, bridging the gap between documentation and specification.
+                        credential metadata JSON, bridging the gap between documentation and specification.
                     </p>
                 </section>
             </article>

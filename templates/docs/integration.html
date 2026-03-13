@@ -32,7 +32,7 @@
                     </p>
                     <pre><code>{
   "$schema": "https://registry.siros.org/schemas/vctm-registry.json",
-  "name": "SIROS Credential Registry",
+    "name": "SIROS Credential Type Registry",
   "version": "2.0",
   "url": "https://registry.siros.org",
   "organizations": [
@@ -216,10 +216,10 @@ const registry = await response.json();
 for (const cred of registry.credentials) {
   console.log(`${cred.name}: ${cred.vct}`);
   
-  // Download VCTM format
+    // Download SD-JWT VC type metadata format
   if (cred.formats.vctm) {
     const vctm = await fetch(cred.formats.vctm.url).then(r => r.json());
-    // Use vctm metadata...
+        // Use credential type metadata...
   }
 }</code></pre>
 
@@ -234,10 +234,10 @@ registry = requests.get(
 for cred in registry['credentials']:
     print(f"{cred['name']}: {cred['vct']}")
     
-    # Download VCTM format
+    # Download SD-JWT VC type metadata format
     if 'vctm' in cred['formats']:
         vctm = requests.get(cred['formats']['vctm']['url']).json()
-        # Use vctm metadata...</code></pre>
+        # Use credential type metadata...</code></pre>
 
                     <h3>Go</h3>
                     <pre><code>resp, _ := http.Get(
