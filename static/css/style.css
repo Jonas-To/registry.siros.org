@@ -450,6 +450,33 @@ main {
     margin: 0;
 }
 
+/* VCTM Logo in header */
+.vctm-logo {
+    max-width: 120px;
+    max-height: 80px;
+    object-fit: contain;
+    margin-bottom: 1rem;
+}
+
+/* Logo/Background image preview in display properties */
+.display-logo-preview {
+    max-width: 80px;
+    max-height: 60px;
+    object-fit: contain;
+    border: 1px solid var(--color-border);
+    border-radius: 4px;
+    padding: 4px;
+    background: #fff;
+}
+
+.display-bg-preview {
+    max-width: 150px;
+    max-height: 80px;
+    object-fit: contain;
+    border: 1px solid var(--color-border);
+    border-radius: 4px;
+}
+
 /* SVG Template Preview */
 .svg-template-section {
     background-color: var(--color-surface);

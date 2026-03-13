@@ -10,6 +10,11 @@
 
             <section class="vctm-detail">
                 <header class="vctm-detail-header">
+                    {{#with vctm.display.[0]}}
+                    {{#if logo.uri}}
+                    <img src="{{{logo.uri}}}" alt="{{logo.alt_text}}" class="vctm-logo">
+                    {{/if}}
+                    {{/with}}
                     <h1>{{#if vctm.name}}{{vctm.name}}{{else}}{{name}}{{/if}}</h1>
                     {{#if vctm.description}}
                     <p class="description">{{vctm.description}}</p>
@@ -23,7 +28,7 @@
                     <div class="svg-template-preview">
                         {{#each rendering.svg_templates}}
                         <div class="svg-template-card">
-                            <img src="{{uri}}" alt="SVG credential template" class="svg-template-object" onerror="this.parentElement.innerHTML='<p>SVG template preview not available</p>'">
+                            <img src="{{{uri}}}" alt="SVG credential template" class="svg-template-object" onerror="this.parentElement.innerHTML='<p>SVG template preview not available</p>'">
                             {{#if properties}}
                             <div class="svg-template-props">
                                 {{#if properties.orientation}}<span class="prop">{{properties.orientation}}</span>{{/if}}
@@ -81,6 +86,18 @@
                                         {{#if textColor}}
                                         / {{textColor}}
                                         {{/if}}
+                                    </dd>
+                                    {{/if}}
+                                    {{#if logo.uri}}
+                                    <dt>Logo</dt>
+                                    <dd>
+                                        <img src="{{{logo.uri}}}" alt="{{logo.alt_text}}" class="display-logo-preview">
+                                    </dd>
+                                    {{/if}}
+                                    {{#if background_image.uri}}
+                                    <dt>Background</dt>
+                                    <dd>
+                                        <img src="{{{background_image.uri}}}" alt="Background image" class="display-bg-preview">
                                     </dd>
                                     {{/if}}
                                 </dl>
