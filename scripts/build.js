@@ -24,6 +24,13 @@ Handlebars.registerHelper('or', function() {
     return args.some(Boolean);
 });
 Handlebars.registerHelper('currentYear', () => new Date().getFullYear());
+Handlebars.registerHelper('formatPath', (path) => {
+    // Convert array path to dot notation: ["a", "b", "c"] → a.b.c
+    if (Array.isArray(path)) {
+        return path.join('.');
+    }
+    return path;
+});
 
 /**
  * Fetch JSON from a URL with redirect and timeout handling

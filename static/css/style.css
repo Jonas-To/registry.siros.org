@@ -538,6 +538,10 @@ main {
     gap: 2rem;
 }
 
+.vctm-detail-grid .vctm-json {
+    grid-column: 1 / -1;  /* JSON section spans full width */
+}
+
 @media (max-width: 900px) {
     .vctm-detail-grid {
         grid-template-columns: 1fr;
@@ -593,6 +597,8 @@ pre {
     border-radius: var(--border-radius);
     overflow-x: auto;
     margin: 0;
+    white-space: pre-wrap;
+    word-break: break-word;
 }
 
 pre code {
@@ -621,6 +627,11 @@ pre code {
     font-weight: 600;
     color: var(--color-text-muted);
     font-size: 0.875rem;
+}
+
+.claims-table td code {
+    word-break: break-word;
+    white-space: normal;
 }
 
 /* Color Swatch */
