@@ -67,36 +67,6 @@
                 {{end}}
             </section>
 
-            {{if .Credentials}}
-            <section class="org-list">
-                <h2>All Attestations</h2>
-                <table class="claims-table">
-                    <thead>
-                        <tr>
-                            <th>Organisation</th>
-                            <th>Credential</th>
-                            <th>Formats</th>
-                            <th>LoS</th>
-                            <th>Binding</th>
-                            <th>Status</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {{range .Credentials}}
-                        <tr>
-                            <td><a href="/{{.Org}}/">{{.Org}}</a></td>
-                            <td><a href="/{{.Org}}/{{.Slug}}/">{{if .VCTM}}{{.VCTM.Name}}{{else}}{{.Slug}}{{end}}</a></td>
-                            <td>{{join ", " .Schema.SupportedFormats}}</td>
-                            <td>{{.Schema.AttestationLoS}}</td>
-                            <td>{{.Schema.BindingType}}</td>
-                            <td>{{if .TS11Compliant}}<span class="badge badge-ts11" title="TS11 Compliant">TS11</span>{{end}}</td>
-                        </tr>
-                        {{end}}
-                    </tbody>
-                </table>
-            </section>
-            {{end}}
-
             <section class="about">
                 <h2>What is this Registry?</h2>
                 <p>
