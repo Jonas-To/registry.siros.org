@@ -365,6 +365,23 @@ main {
     margin: 0.5rem 0 1rem;
 }
 
+/* Rulebook content in tab */
+.rulebook-content {
+    line-height: 1.7;
+}
+
+.rulebook-content h1,
+.rulebook-content h2,
+.rulebook-content h3 {
+    margin-top: 1.5rem;
+    margin-bottom: 0.75rem;
+}
+
+.rulebook-content h1:first-child,
+.rulebook-content h2:first-child {
+    margin-top: 0;
+}
+
 .format-meta {
     font-size: 0.9rem;
 }
@@ -502,8 +519,14 @@ main {
 /* Overview Grid */
 .overview-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    grid-template-columns: 1fr;
     gap: 1.5rem;
+}
+
+@media (min-width: 900px) {
+    .overview-grid {
+        grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+    }
 }
 
 /* Legacy vctm-detail-header support */
@@ -650,6 +673,16 @@ main {
 
 .info-section dd {
     margin: 0 0 1rem;
+    overflow-wrap: break-word;
+    word-break: break-all;
+}
+
+.info-section dd a {
+    word-break: break-all;
+}
+
+.info-section dd code {
+    word-break: break-all;
 }
 
 .info-section dd:last-child {
