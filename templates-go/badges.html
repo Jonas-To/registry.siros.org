@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Badges — Credential Type Registry</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="icon" type="image/svg+xml" href="/static/images/favicon.svg">
+</head>
+<body>
+    <header class="site-header">
+        <div class="container">
+            <a href="/" class="logo">
+                <img src="/static/images/logo.svg" alt="SIROS" class="logo-image">
+                <span class="logo-subtitle">Credential Type Registry</span>
+            </a>
+            <nav class="main-nav">
+                <a href="/">Home</a>
+                <a href="/docs/register.html">Publish</a>
+                <a href="/docs/ts11.html">TS11</a>
+                <a href="/docs/api.html">API</a>
+                <a href="/docs/badges.html">Badges</a>
+                <a href="/docs/support.html">Support</a>
+                <a href="/docs/about.html">About</a>
+            </nav>
+        </div>
+    </header>
+    <main>
+        <div class="container">
+            <nav class="breadcrumb">
+                <a href="/">Home</a>
+                <span class="separator">/</span>
+                <span class="current">Badges</span>
+            </nav>
+
+            <article class="docs-page">
+                <h1>SIROS Registry Badges</h1>
+                <p class="lead">
+                    Display a SIROS Registry badge in your repository's README to show that your
+                    project publishes credential metadata (SD-JWT VC, mDOC, W3C VC formats).
+                </p>
+
+                <section class="docs-section">
+                    <h2>Badge Preview</h2>
+                    <div class="badge-preview">
+                        <img src="https://img.shields.io/badge/SIROS-Registry-1C4587?style=flat&amp;logo=data:image/svg%2bxml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MTIgNTEyIj48cGF0aCBmaWxsPSIjMUM0NTg3IiBzdHJva2U9IndoaXRlIiBzdHJva2Utd2lkdGg9IjEyIiBkPSJNMTg3IDEwMmMxMiA3OSAxMiA3OSA5MSA5MS03OSAxMi03OSAxMi05MSA5MS0xMi03OS0xMi03OS05MS05MSA3OS0xMiA3OS0xMiA5MS05MXptNiAyMjdjMTM4LTIxIDEzOC0yMSAxNjAtMTYwIDIxIDEzNSAyMSAxMzggMTQ5IDE1OCA3LTIzIDEwLTQ3IDEwLTcyQzUxMiAxMTUgMzk3IDAgMjU2IDAgMTE1IDAgMCAxMTUgMCAyNTZjMCAxNDEgMTE1IDI1NiAyNTYgMjU2IDExNSAwIDIxMy03NiAyNDUtMTgxLTEyNyAyMC0xMjggMjQtMTQ4IDE1OC0yMi0xMzgtMjItMTM4LTE2MC0xNjB6Ii8+PC9zdmc+" alt="SIROS Registry">
+                        <br><br>
+                        <img src="https://img.shields.io/badge/SIROS-Registry-1C4587?style=for-the-badge&amp;logo=data:image/svg%2bxml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MTIgNTEyIj48cGF0aCBmaWxsPSIjMUM0NTg3IiBzdHJva2U9IndoaXRlIiBzdHJva2Utd2lkdGg9IjEyIiBkPSJNMTg3IDEwMmMxMiA3OSAxMiA3OSA5MSA5MS03OSAxMi03OSAxMi05MSA5MS0xMi03OS0xMi03OS05MS05MSA3OS0xMiA3OS0xMiA5MS05MXptNiAyMjdjMTM4LTIxIDEzOC0yMSAxNjAtMTYwIDIxIDEzNSAyMSAxMzggMTQ5IDE1OCA3LTIzIDEwLTQ3IDEwLTcyQzUxMiAxMTUgMzk3IDAgMjU2IDAgMTE1IDAgMCAxMTUgMCAyNTZjMCAxNDEgMTE1IDI1NiAyNTYgMjU2IDExNSAwIDIxMy03NiAyNDUtMTgxLTEyNyAyMC0xMjggMjQtMTQ4IDE1OC0yMi0xMzgtMjItMTM4LTE2MC0xNjB6Ii8+PC9zdmc+" alt="SIROS Registry">
+                    </div>
+                </section>
+
+                <section class="docs-section">
+                    <h2>Badge Generator</h2>
+                    <div class="badge-generator">
+                        <label for="org-input">GitHub Organization / Username</label>
+                        <input type="text" id="org-input" placeholder="e.g., sirosfoundation" value="">
+
+                        <label for="style-select">Badge Style</label>
+                        <select id="style-select">
+                            <option value="flat">Flat (default)</option>
+                            <option value="flat-square">Flat Square</option>
+                            <option value="for-the-badge">For the Badge</option>
+                            <option value="plastic">Plastic</option>
+                            <option value="social">Social</option>
+                        </select>
+
+                        <button onclick="generateBadge()" class="btn btn-primary">Generate Badge</button>
+
+                        <div id="badge-result" class="badge-result">
+                            <h3>Live Preview</h3>
+                            <div class="badge-live-preview">
+                                <a id="badge-link" href="#"><img id="badge-img" src="" alt="SIROS Registry"></a>
+                            </div>
+
+                            <h3>Markdown</h3>
+                            <div class="output-box" id="markdown-output"></div>
+                            <button class="btn btn-copy" onclick="copyToClipboard('markdown-output')">Copy</button>
+
+                            <h3>HTML</h3>
+                            <div class="output-box" id="html-output"></div>
+                            <button class="btn btn-copy" onclick="copyToClipboard('html-output')">Copy</button>
+
+                            <h3>Image URL</h3>
+                            <div class="output-box" id="url-output"></div>
+                            <button class="btn btn-copy" onclick="copyToClipboard('url-output')">Copy</button>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="docs-section">
+                    <h2>Manual Usage</h2>
+
+                    <h3>Markdown</h3>
+                    <pre><code>[![SIROS Registry](https://img.shields.io/badge/SIROS-Registry-1C4587?style=flat&amp;logo=data:image/svg%2bxml;base64,...)](https://registry.siros.org/YOUR_ORG/)</code></pre>
+                    <p>Replace <code>YOUR_ORG</code> with your GitHub organization or username.</p>
+
+                    <h3>HTML</h3>
+                    <pre><code>&lt;a href="https://registry.siros.org/YOUR_ORG/"&gt;
+  &lt;img src="https://img.shields.io/badge/SIROS-Registry-1C4587" alt="SIROS Registry"&gt;
+&lt;/a&gt;</code></pre>
+                </section>
+
+                <section class="docs-section">
+                    <h2>Badge Styles</h2>
+                    <p>Shields.io supports multiple badge styles. Change <code>style=flat</code> to one of:</p>
+                    <ul>
+                        <li><code>flat</code> - Default flat style</li>
+                        <li><code>flat-square</code> - Flat with square corners</li>
+                        <li><code>for-the-badge</code> - Larger badge for prominent display</li>
+                        <li><code>plastic</code> - 3D plastic look</li>
+                        <li><code>social</code> - Social media style</li>
+                    </ul>
+                </section>
+            </article>
+        </div>
+
+        <script>
+            const SIROS_LOGO_BASE64 = 'PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MTIgNTEyIj48cGF0aCBmaWxsPSIjMUM0NTg3IiBzdHJva2U9IndoaXRlIiBzdHJva2Utd2lkdGg9IjEyIiBkPSJNMTg3IDEwMmMxMiA3OSAxMiA3OSA5MSA5MS03OSAxMi03OSAxMi05MSA5MS0xMi03OS0xMi03OS05MS05MSA3OS0xMiA3OS0xMiA5MS05MXptNiAyMjdjMTM4LTIxIDEzOC0yMSAxNjAtMTYwIDIxIDEzNSAyMSAxMzggMTQ5IDE1OCA3LTIzIDEwLTQ3IDEwLTcyQzUxMiAxMTUgMzk3IDAgMjU2IDAgMTE1IDAgMCAxMTUgMCAyNTZjMCAxNDEgMTE1IDI1NiAyNTYgMjU2IDExNSAwIDIxMy03NiAyNDUtMTgxLTEyNyAyMC0xMjggMjQtMTQ4IDE1OC0yMi0xMzgtMjItMTM4LTE2MC0xNjB6Ii8+PC9zdmc+';
+
+            function generateBadge() {
+                const org = document.getElementById('org-input').value.trim();
+                const style = document.getElementById('style-select').value;
+
+                if (!org) {
+                    alert('Please enter an organization name');
+                    return;
+                }
+
+                const logoParam = 'logo=data:image/svg%2bxml;base64,' + SIROS_LOGO_BASE64;
+                const badgeUrl = 'https://img.shields.io/badge/SIROS-Registry-1C4587?style=' + style + '&' + logoParam;
+                const registryUrl = 'https://registry.siros.org/' + org + '/';
+
+                document.getElementById('badge-img').src = badgeUrl;
+                document.getElementById('badge-link').href = registryUrl;
+
+                document.getElementById('markdown-output').textContent =
+                    '[![SIROS Registry](' + badgeUrl + ')](' + registryUrl + ')';
+                document.getElementById('html-output').textContent =
+                    '<a href="' + registryUrl + '">\n  <img src="' + badgeUrl + '" alt="SIROS Registry">\n</a>';
+                document.getElementById('url-output').textContent = badgeUrl;
+
+                document.getElementById('badge-result').classList.add('visible');
+            }
+
+            function copyToClipboard(elementId) {
+                const text = document.getElementById(elementId).textContent;
+                navigator.clipboard.writeText(text).then(function() {
+                    var btn = event.target;
+                    var originalText = btn.textContent;
+                    btn.textContent = 'Copied!';
+                    setTimeout(function() { btn.textContent = originalText; }, 2000);
+                });
+            }
+
+            document.getElementById('org-input').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') { generateBadge(); }
+            });
+        </script>
+    </main>
+    <footer class="site-footer">
+        <div class="container">
+            <p>&copy; 2026 SIROS Foundation. All rights reserved.</p>
+        </div>
+    </footer>
+</body>
+</html>

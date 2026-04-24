@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About — Credential Type Registry</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="icon" type="image/svg+xml" href="/static/images/favicon.svg">
+</head>
+<body>
+    <header class="site-header">
+        <div class="container">
+            <a href="/" class="logo">
+                <img src="/static/images/logo.svg" alt="SIROS" class="logo-image">
+                <span class="logo-subtitle">Credential Type Registry</span>
+            </a>
+            <nav class="main-nav">
+                <a href="/">Home</a>
+                <a href="/docs/register.html">Publish</a>
+                <a href="/docs/ts11.html">TS11</a>
+                <a href="/docs/api.html">API</a>
+                <a href="/docs/badges.html">Badges</a>
+                <a href="/docs/support.html">Support</a>
+                <a href="/docs/about.html">About</a>
+            </nav>
+        </div>
+    </header>
+    <main>
+        <div class="container">
+            <nav class="breadcrumb">
+                <a href="/">Home</a>
+                <span class="separator">/</span>
+                <span class="current">About</span>
+            </nav>
+
+            <article class="docs-page">
+                <h1>About the Credential Type Registry</h1>
+                <p class="lead">
+                    The SIROS Credential Type Registry is a public directory of credential metadata,
+                    helping verifiers and wallets discover and understand credential types across
+                    SD-JWT VC, mDOC, and W3C VC ecosystems.
+                </p>
+
+                <section class="docs-section">
+                    <h2>What is Credential Metadata?</h2>
+                    <p>
+                        <strong>Credential metadata</strong> is standardized information that describes
+                        verifiable credentials, enabling interoperability across different implementations.
+                        It includes:
+                    </p>
+                    <ul>
+                        <li><strong>Display information</strong> - names, descriptions, logos, and colors</li>
+                        <li><strong>Claim definitions</strong> - what data the credential contains</li>
+                        <li><strong>Rendering templates</strong> - how to visually present the credential</li>
+                        <li><strong>Validation rules</strong> - which claims are mandatory or selectively disclosable</li>
+                    </ul>
+
+                    <h3>Supported Formats</h3>
+                    <p>The registry supports metadata for multiple credential formats:</p>
+                    <ul>
+                        <li>
+                            <strong>SD-JWT VC (VCTM)</strong> -
+                            <a href="https://datatracker.ietf.org/doc/draft-ietf-oauth-sd-jwt-vc/" target="_blank">
+                                IETF SD-JWT Verifiable Credentials</a>
+                        </li>
+                        <li>
+                            <strong>mso_mdoc</strong> -
+                            <a href="https://www.iso.org/standard/69084.html" target="_blank">
+                                ISO 18013-5 mobile documents</a> (mDL, mID, etc.)
+                        </li>
+                        <li>
+                            <strong>W3C VCDM 2.0</strong> -
+                            <a href="https://www.w3.org/TR/vc-data-model-2.0/" target="_blank">
+                                W3C Verifiable Credentials Data Model</a>
+                        </li>
+                    </ul>
+                </section>
+
+                <section class="docs-section">
+                    <h2>Why a Registry?</h2>
+                    <p>A public registry enables:</p>
+                    <ul>
+                        <li><strong>Discovery</strong> - Verifiers can find metadata for credentials they receive</li>
+                        <li><strong>Consistency</strong> - Wallets can display credentials correctly using authoritative metadata from issuers</li>
+                        <li><strong>Interoperability</strong> - A common format and location for credential type information across the ecosystem</li>
+                        <li><strong>Documentation</strong> - Human-readable descriptions of what each credential type contains and how it should be used</li>
+                    </ul>
+                </section>
+
+                <section class="docs-section">
+                    <h2>Built by SIROS Foundation</h2>
+                    <p>
+                        This service is built and maintained by the
+                        <a href="https://siros.org" target="_blank"><strong>SIROS Foundation</strong></a>
+                        for the digital credentials community.
+                    </p>
+                    <p>
+                        SIROS Foundation is dedicated to building open infrastructure for
+                        secure, privacy-preserving digital identity.
+                    </p>
+                    <p>
+                        <a href="https://siros.org" target="_blank" class="btn btn-primary">
+                            Learn more at siros.org
+                        </a>
+                    </p>
+                </section>
+
+                <section class="docs-section">
+                    <h2>Open Source</h2>
+                    <p>All tools and the registry itself are open source:</p>
+                    <ul>
+                        <li>
+                            <a href="https://github.com/sirosfoundation/registry.siros.org" target="_blank">
+                                registry.siros.org</a> - This registry site
+                        </li>
+                        <li>
+                            <a href="https://github.com/sirosfoundation/registry-cli" target="_blank">
+                                registry-cli</a> - CLI tool for building and signing the registry
+                        </li>
+                        <li>
+                            <a href="https://github.com/sirosfoundation/mtcvctm" target="_blank">
+                                mtcvctm</a> - CLI tool and GitHub Action for generating multi-format credential metadata
+                        </li>
+                    </ul>
+                    <p>Contributions and feedback are welcome!</p>
+                </section>
+            </article>
+        </div>
+    </main>
+    <footer class="site-footer">
+        <div class="container">
+            <p>&copy; 2026 SIROS Foundation. All rights reserved.</p>
+        </div>
+    </footer>
+</body>
+</html>

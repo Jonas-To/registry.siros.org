@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Markdown Format — Credential Type Registry</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="icon" type="image/svg+xml" href="/static/images/favicon.svg">
+</head>
+<body>
+    <header class="site-header">
+        <div class="container">
+            <a href="/" class="logo">
+                <img src="/static/images/logo.svg" alt="SIROS" class="logo-image">
+                <span class="logo-subtitle">Credential Type Registry</span>
+            </a>
+            <nav class="main-nav">
+                <a href="/">Home</a>
+                <a href="/docs/register.html">Publish</a>
+                <a href="/docs/ts11.html">TS11</a>
+                <a href="/docs/api.html">API</a>
+                <a href="/docs/badges.html">Badges</a>
+                <a href="/docs/support.html">Support</a>
+                <a href="/docs/about.html">About</a>
+            </nav>
+        </div>
+    </header>
+    <main>
+        <div class="container">
+            <nav class="breadcrumb">
+                <a href="/">Home</a>
+                <span class="separator">/</span>
+                <span class="current">Markdown Format</span>
+            </nav>
+
+            <article class="docs-page">
+                <h1>Credential Type Metadata Markdown Format</h1>
+                <p class="lead">
+                    Define Verifiable Credential Type Metadata using familiar Markdown syntax with
+                    support for display names, multiple languages, and rich rendering options.
+                </p>
+
+                <section class="docs-section">
+                    <h2>Basic Structure</h2>
+                    <p>
+                        A credential metadata markdown file consists of YAML front matter followed by structured
+                        content sections:
+                    </p>
+                    <pre><code>---
+vct: https://example.com/credentials/identity
+background_color: "#1a365d"
+text_color: "#ffffff"
+---
+
+# Identity Credential
+
+A verifiable credential for identity verification.
+
+## Claims
+
+- `given_name` "Given Name" (string): The given name [mandatory]
+- `family_name` (string): The family name [mandatory]
+
+## Images
+
+![Logo](images/logo.png)</code></pre>
+                </section>
+
+                <section class="docs-section">
+                    <h2>Front Matter</h2>
+                    <p>The optional YAML front matter configures credential-level properties:</p>
+                    <table class="docs-table">
+                        <thead>
+                            <tr><th>Property</th><th>Description</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td><code>vct</code></td><td>The Verifiable Credential Type identifier (URI)</td></tr>
+                            <tr><td><code>background_color</code></td><td>Background color for credential display (hex)</td></tr>
+                            <tr><td><code>text_color</code></td><td>Text color for credential display (hex)</td></tr>
+                            <tr><td><code>extends</code></td><td>URI of another VCT that this type extends</td></tr>
+                            <tr><td><code>doctype</code></td><td>mso_mdoc document type identifier</td></tr>
+                        </tbody>
+                    </table>
+                </section>
+
+                <section class="docs-section">
+                    <h2>Claims</h2>
+                    <p>
+                        Claims are defined as list items under a <code>## Claims</code> section:
+                    </p>
+                    <pre><code>- `claim_name` "Display Name" (type): Description [flags]</code></pre>
+
+                    <h3>Claim Components</h3>
+                    <table class="docs-table">
+                        <thead>
+                            <tr><th>Component</th><th>Required</th><th>Description</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td><code>`claim_name`</code></td><td>Yes</td><td>The claim identifier in backticks</td></tr>
+                            <tr><td><code>"Display Name"</code></td><td>No</td><td>Human-readable label</td></tr>
+                            <tr><td><code>(type)</code></td><td>No</td><td>Value type: string, date, number, object, image</td></tr>
+                            <tr><td><code>[mandatory]</code></td><td>No</td><td>Mark the claim as required</td></tr>
+                            <tr><td><code>[sd=always|never]</code></td><td>No</td><td>Selective disclosure setting</td></tr>
+                            <tr><td><code>[svg_id=id]</code></td><td>No</td><td>SVG template element ID</td></tr>
+                        </tbody>
+                    </table>
+
+                    <h3>Examples</h3>
+                    <pre><code># Simple claim with type
+- `email` (string): The holder's email address
+
+# Claim with display name
+- `given_name` "Given Name" (string): The first name of the holder
+
+# Mandatory claim with selective disclosure
+- `personal_id` "Personal ID" (string): Unique identifier [mandatory] [sd=always]</code></pre>
+                </section>
+
+                <section class="docs-section">
+                    <h2>Localization</h2>
+                    <p>Add multi-language support by nesting locale-specific entries under claims:</p>
+                    <pre><code>- `given_name` "Given Name" (string): The given name [mandatory]
+  - de-DE: "Vorname" - Der Vorname des Inhabers
+  - sv: "Förnamn" - Innehavarens förnamn
+  - fr: "Prénom" - Le prénom du titulaire</code></pre>
+                </section>
+
+                <section class="docs-section">
+                    <h2>Multi-Format Output</h2>
+                    <p>
+                        mtcvctm generates three credential format specifications from each Markdown file:
+                    </p>
+                    <ul>
+                        <li><strong>SD-JWT VC Type Metadata</strong> (<code>.vctm.json</code>)</li>
+                        <li><strong>mso_mdoc Configuration</strong> (<code>.mdoc.json</code>)</li>
+                        <li><strong>W3C VCDM 2.0 Schema</strong> (<code>.vc.json</code>)</li>
+                    </ul>
+                </section>
+
+                <section class="docs-section">
+                    <h2>References</h2>
+                    <ul>
+                        <li><a href="https://github.com/sirosfoundation/mtcvctm" target="_blank">mtcvctm on GitHub</a></li>
+                        <li><a href="https://datatracker.ietf.org/doc/html/draft-ietf-oauth-sd-jwt-vc" target="_blank">SD-JWT VC Specification</a></li>
+                        <li><a href="/docs/github-action.html">GitHub Action Setup</a></li>
+                        <li><a href="/docs/register.html">Register Your Credentials</a></li>
+                    </ul>
+                </section>
+            </article>
+        </div>
+    </main>
+    <footer class="site-footer">
+        <div class="container">
+            <p>&copy; 2026 SIROS Foundation. All rights reserved.</p>
+        </div>
+    </footer>
+</body>
+</html>

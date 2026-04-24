@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Your Repository — Credential Type Registry</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="icon" type="image/svg+xml" href="/static/images/favicon.svg">
+</head>
+<body>
+    <header class="site-header">
+        <div class="container">
+            <a href="/" class="logo">
+                <img src="/static/images/logo.svg" alt="SIROS" class="logo-image">
+                <span class="logo-subtitle">Credential Type Registry</span>
+            </a>
+            <nav class="main-nav">
+                <a href="/">Home</a>
+                <a href="/docs/register.html">Publish</a>
+                <a href="/docs/ts11.html">TS11</a>
+                <a href="/docs/api.html">API</a>
+                <a href="/docs/badges.html">Badges</a>
+                <a href="/docs/support.html">Support</a>
+                <a href="/docs/about.html">About</a>
+            </nav>
+        </div>
+    </header>
+    <main>
+        <div class="container">
+            <nav class="breadcrumb">
+                <a href="/">Home</a>
+                <span class="separator">/</span>
+                <span class="current">Add Your Repository</span>
+            </nav>
+
+            <article class="docs-page">
+                <h1>Add Your Repository</h1>
+                <p class="lead">
+                    Add your credential definitions to the Registry by adding the <code>vctm</code> topic
+                    to your GitHub repository. The registry automatically discovers and includes repositories
+                    with valid content.
+                </p>
+
+                <section class="docs-section">
+                    <h2>Step 1: Set Up Your Repository</h2>
+                    <p>
+                        Use the <a href="/docs/github-action.html">mtcvctm GitHub Action</a> to automatically:
+                    </p>
+                    <ul>
+                        <li>Generate credential metadata from Markdown documentation (SD-JWT VC, mDOC, W3C VC)</li>
+                        <li>Create and maintain the <code>vctm</code> branch</li>
+                        <li>Build the <code>.well-known/vctm-registry.json</code> manifest</li>
+                    </ul>
+                    <p>
+                        See the <a href="/docs/github-action.html">Setup Guide</a> for detailed instructions.
+                    </p>
+                </section>
+
+                <section class="docs-section">
+                    <h2>Step 2: Add the <code>vctm</code> Topic</h2>
+                    <p>
+                        The registry discovers repositories by searching for the <code>vctm</code> topic on GitHub:
+                    </p>
+                    <ol>
+                        <li>Go to your repository on GitHub</li>
+                        <li>Click the gear icon next to <strong>About</strong> in the right sidebar</li>
+                        <li>In the <strong>Topics</strong> field, type <code>vctm</code> and press Enter</li>
+                        <li>Click <strong>Save changes</strong></li>
+                    </ol>
+                </section>
+
+                <section class="docs-section">
+                    <h2>Step 3: Wait for Discovery</h2>
+                    <p>After adding the <code>vctm</code> topic, the registry will:</p>
+                    <ol>
+                        <li><strong>Discover</strong> your repository during the next build cycle</li>
+                        <li><strong>Validate</strong> that the <code>vctm</code> branch exists and contains
+                            <code>.well-known/vctm-registry.json</code></li>
+                        <li><strong>Publish</strong> your credential types at
+                            <code>https://registry.siros.org/your-org/</code></li>
+                    </ol>
+                    <p>
+                        This typically happens within 6 hours. If your repository doesn't appear,
+                        verify that your <code>vctm</code> branch is set up correctly.
+                    </p>
+                </section>
+
+                <section class="docs-section">
+                    <h2>Requirements</h2>
+                    <p>Your repository must have:</p>
+                    <ul>
+                        <li>A <code>vctm</code> branch (created automatically by the GitHub Action)</li>
+                        <li>A manifest at <code>.well-known/vctm-registry.json</code></li>
+                        <li>Valid credential metadata files (<code>.vctm.json</code>, <code>.mdoc.json</code>, or <code>.vc.json</code>)</li>
+                    </ul>
+                </section>
+
+                <section class="docs-section">
+                    <h2>Need Help?</h2>
+                    <p>If you encounter issues or have questions:</p>
+                    <ul>
+                        <li>
+                            <a href="https://github.com/sirosfoundation/registry.siros.org/issues" target="_blank">
+                                Open an issue</a> on the registry repository
+                        </li>
+                        <li>
+                            Check the <a href="https://github.com/sirosfoundation/mtcvctm" target="_blank">
+                                mtcvctm documentation</a> for the CLI tool
+                        </li>
+                        <li>Review existing repositories in the registry for examples</li>
+                    </ul>
+                </section>
+            </article>
+        </div>
+    </main>
+    <footer class="site-footer">
+        <div class="container">
+            <p>&copy; 2026 SIROS Foundation. All rights reserved.</p>
+        </div>
+    </footer>
+</body>
+</html>
