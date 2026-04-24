@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Attestation Rulebook — {{.Slug}}</title>
+    <title>{{.Name}} — Credential Type Registry</title>
     <link rel="stylesheet" href="/static/css/style.css">
     <link rel="icon" type="image/svg+xml" href="/static/images/favicon.svg">
 </head>
@@ -33,23 +33,46 @@
             <nav class="breadcrumb">
                 <a href="/">Home</a>
                 <span class="separator">/</span>
-                <a href="/{{.Org}}/{{.Slug}}/">{{.Slug}}</a>
-                <span class="separator">/</span>
-                <span class="current">Rulebook</span>
+                <span class="current">{{.Name}}</span>
             </nav>
 
-            <h1>Attestation Rulebook: {{.Slug}}</h1>
-            <p>Organisation: <strong>{{.Org}}</strong></p>
+            <section class="org-header">
+                <h1>{{.Name}}</h1>
+                <p class="org-meta">
+                    {{len .Credentials}} credential{{if ne (len .Credentials) 1}}s{{end}} registered
+                </p>
+            </section>
 
-            <article class="rulebook">
-                {{.Content}}
-            </article>
+            <section class="vctm-list">
+                <h2>Credentials</h2>
+                <div class="vctm-grid">
+                    {{range .Credentials}}
+                    <a href="/{{.Org}}/{{.Slug}}/" class="vctm-card">
+                        <h3>{{if .VCTM}}{{.VCTM.Name}}{{else}}{{.Slug}}{{end}}</h3>
+                        {{if .VCTM}}{{if .VCTM.Description}}
+                        <p class="vctm-description">{{.VCTM.Description}}</p>
+                        {{end}}{{end}}
+                        <dl class="vctm-meta">
+                            {{if .VCTM}}{{if .VCTM.VCT}}
+                            <dt>VCT URI</dt>
+                            <dd><code>{{.VCTM.VCT}}</code></dd>
+                            {{end}}{{end}}
+                            <dt>Formats</dt>
+                            <dd>{{join ", " .Schema.SupportedFormats}}</dd>
+                            {{if .TS11Compliant}}
+                            <dt>Status</dt>
+                            <dd><span class="badge badge-ts11">TS11</span></dd>
+                            {{end}}
+                        </dl>
+                    </a>
+                    {{end}}
+                </div>
+            </section>
         </div>
     </main>
     <footer class="site-footer">
         <div class="container">
             <p>&copy; 2026 SIROS Foundation. All rights reserved.</p>
-            <p><a href="/{{.Org}}/{{.Slug}}/">← Back to credential</a></p>
         </div>
     </footer>
 </body>

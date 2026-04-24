@@ -17,6 +17,9 @@
             <nav class="main-nav">
                 <a href="/">Home</a>
                 <a href="/docs/register.html">Publish</a>
+                <a href="/docs/markdown-format.html">Markdown</a>
+                <a href="/docs/github-action.html">Setup</a>
+                <a href="/docs/integration.html">Integrate</a>
                 <a href="/docs/ts11.html">TS11</a>
                 <a href="/docs/api.html">API</a>
                 <a href="/docs/badges.html">Badges</a>
@@ -41,23 +44,37 @@
 
                 <section class="docs-section">
                     <h2>Getting Help</h2>
-                    <p>If you have questions about using the SIROS Registry or mtcvctm tool:</p>
+                    <p>
+                        If you have questions about using the SIROS Registry or mtcvctm tool:
+                    </p>
                     <ul>
                         <li>Check the <a href="/docs/markdown-format.html">Markdown Format</a> documentation</li>
                         <li>Review the <a href="/docs/github-action.html">GitHub Action Setup</a> guide</li>
+                        <li>Read the <a href="/docs/integration.html">Integration Guide</a> for API usage</li>
                         <li>Browse existing issues on GitHub for similar questions</li>
                     </ul>
                 </section>
 
                 <section class="docs-section">
                     <h2>Reporting Issues</h2>
-                    <p>Found a bug or want to request a feature? We track issues separately for each project:</p>
+                    <p>
+                        Found a bug or want to request a feature? We track issues separately for each project:
+                    </p>
 
                     <div class="issue-cards">
                         <div class="issue-card">
                             <h3>mtcvctm Tool &amp; GitHub Action</h3>
-                            <p>For issues with the Markdown-to-credential-metadata converter, multi-format output generation,
-                                GitHub Action, or CLI tool.</p>
+                            <p>
+                                For issues with the Markdown-to-credential-metadata converter, multi-format output generation,
+                                GitHub Action, or CLI tool:
+                            </p>
+                            <ul>
+                                <li>Parsing or conversion errors</li>
+                                <li>Multi-format generation (SD-JWT VC, mDOC, W3C VC)</li>
+                                <li>GitHub Action workflow problems</li>
+                                <li>CLI tool bugs or new features</li>
+                                <li>Documentation improvements</li>
+                            </ul>
                             <a href="https://github.com/sirosfoundation/mtcvctm/issues/new/choose"
                                target="_blank" class="btn btn-primary">
                                 Open Issue on mtcvctm
@@ -66,7 +83,16 @@
 
                         <div class="issue-card">
                             <h3>Registry Website</h3>
-                            <p>For issues with the SIROS Registry website (registry.siros.org).</p>
+                            <p>
+                                For issues with the SIROS Registry website (registry.siros.org):
+                            </p>
+                            <ul>
+                                <li>Display or rendering problems</li>
+                                <li>Registry discovery issues</li>
+                                <li>Website navigation or UI bugs</li>
+                                <li>Documentation on the site</li>
+                                <li>New feature requests for the registry</li>
+                            </ul>
                             <a href="https://github.com/sirosfoundation/registry.siros.org/issues/new"
                                target="_blank" class="btn btn-primary">
                                 Open Issue on Registry
@@ -76,8 +102,34 @@
                 </section>
 
                 <section class="docs-section">
+                    <h2>What to Include</h2>
+                    <p>
+                        When reporting a bug, please include:
+                    </p>
+                    <ul>
+                        <li><strong>Description</strong> — Clear description of the issue</li>
+                        <li><strong>Steps to reproduce</strong> — How to trigger the problem</li>
+                        <li><strong>Expected behavior</strong> — What should happen</li>
+                        <li><strong>Actual behavior</strong> — What actually happens</li>
+                        <li><strong>Environment</strong> — OS, Go version (if using CLI), browser (if website issue)</li>
+                        <li><strong>Sample files</strong> — Markdown files or configuration that triggers the issue</li>
+                    </ul>
+
+                    <p>
+                        For feature requests, please describe:
+                    </p>
+                    <ul>
+                        <li><strong>Use case</strong> — What problem does this solve?</li>
+                        <li><strong>Proposed solution</strong> — How should it work?</li>
+                        <li><strong>Alternatives</strong> — Other approaches you've considered</li>
+                    </ul>
+                </section>
+
+                <section class="docs-section">
                     <h2>Contributing</h2>
-                    <p>We welcome contributions! To get started:</p>
+                    <p>
+                        We welcome contributions! To get started:
+                    </p>
                     <ol>
                         <li>Fork the repository on GitHub</li>
                         <li>Create a feature branch from <code>main</code></li>
@@ -85,6 +137,27 @@
                         <li>Add tests if applicable</li>
                         <li>Submit a pull request</li>
                     </ol>
+
+                    <h3>Development Setup</h3>
+
+                    <h4>mtcvctm (Go)</h4>
+                    <pre><code>git clone https://github.com/sirosfoundation/mtcvctm.git
+cd mtcvctm
+make build
+make test</code></pre>
+
+                    <h4>registry-cli (Go)</h4>
+                    <pre><code>git clone https://github.com/sirosfoundation/registry-cli.git
+cd registry-cli
+go build ./...
+go test ./...</code></pre>
+
+                    <h4>Registry Website</h4>
+                    <pre><code>git clone https://github.com/sirosfoundation/registry.siros.org.git
+cd registry.siros.org
+# Build requires registry-cli:
+go install github.com/sirosfoundation/registry-cli/cmd/registry-cli@latest
+registry-cli build --sources sources.yaml --templates templates-go --static static --output dist</code></pre>
                 </section>
 
                 <section class="docs-section">
@@ -116,10 +189,17 @@
                             </tr>
                             <tr>
                                 <td><strong>registry.siros.org</strong></td>
-                                <td>SIROS Credential Type Registry website</td>
+                                <td>SIROS Credential Type Registry website and configuration</td>
                                 <td>
                                     <a href="https://github.com/sirosfoundation/registry.siros.org" target="_blank">Repository</a> ·
                                     <a href="https://github.com/sirosfoundation/registry.siros.org/issues" target="_blank">Issues</a>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><strong>vctm-template</strong></td>
+                                <td>Template repository for creating credential type definitions</td>
+                                <td>
+                                    <a href="https://github.com/leifj/vctm-template" target="_blank">Repository</a>
                                 </td>
                             </tr>
                         </tbody>

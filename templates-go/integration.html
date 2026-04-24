@@ -17,6 +17,9 @@
             <nav class="main-nav">
                 <a href="/">Home</a>
                 <a href="/docs/register.html">Publish</a>
+                <a href="/docs/markdown-format.html">Markdown</a>
+                <a href="/docs/github-action.html">Setup</a>
+                <a href="/docs/integration.html">Integrate</a>
                 <a href="/docs/ts11.html">TS11</a>
                 <a href="/docs/api.html">API</a>
                 <a href="/docs/badges.html">Badges</a>
@@ -36,23 +39,174 @@
             <article class="docs-page">
                 <h1>Integration Guide</h1>
                 <p class="lead">
-                    Use the machine-readable API to automatically configure issuers,
+                    Use the machine-readable registry API to automatically configure issuers,
                     verifiers, and wallet applications with credential metadata.
                 </p>
 
                 <section class="docs-section">
-                    <h2>TS11 API</h2>
-                    <p>The registry provides a TS11-compliant API at:</p>
+                    <h2>Registry API</h2>
+                    <p>
+                        The registry provides a comprehensive index of all credentials at:
+                    </p>
                     <pre><code>https://registry.siros.org/api/v1/schemas.json</code></pre>
                     <p>
-                        This JSON file contains all TS11-compliant credential schemas.
-                        See the <a href="/docs/api.html">API Reference</a> for details.
+                        This JSON file contains all TS11-compliant credential schemas,
+                        enabling automated configuration of credential ecosystems.
+                        See the <a href="/docs/api.html">API Reference</a> for the full specification.
                     </p>
                 </section>
 
                 <section class="docs-section">
+                    <h2>API Response Structure</h2>
+                    <p>
+                        The registry API follows this structure:
+                    </p>
+                    <pre><code>{
+  "total": 3,
+  "limit": 3,
+  "offset": 0,
+  "data": [
+    {
+      "id": "550e8400-e29b-41d4-a716-446655440000",
+      "version": "1.0.0",
+      "attestationLoS": "high",
+      "bindingType": "cnf",
+      "supportedFormats": ["dc+sd-jwt", "mso_mdoc"],
+      "schemaURIs": [
+        {
+          "formatIdentifier": "dc+sd-jwt",
+          "uri": "https://registry.siros.org/example-org/Identity.vctm.json"
+        },
+        {
+          "formatIdentifier": "mso_mdoc",
+          "uri": "https://registry.siros.org/example-org/Identity.mdoc.json"
+        }
+      ],
+      "rulebookURI": "https://registry.siros.org/example-org/Identity/rulebook.html",
+      "trustedAuthorities": []
+    }
+  ]
+}</code></pre>
+                </section>
+
+                <section class="docs-section">
+                    <h2>Credential Formats</h2>
+                    <p>
+                        Each credential may include metadata in one or more formats:
+                    </p>
+                    <table class="docs-table">
+                        <thead>
+                            <tr>
+                                <th>Format</th>
+                                <th>Identifier</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>SD-JWT VC</strong></td>
+                                <td><code>dc+sd-jwt</code></td>
+                                <td>Verifiable Credential Type Metadata for SD-JWT VCs (IETF draft)</td>
+                            </tr>
+                            <tr>
+                                <td><strong>mso_mdoc</strong></td>
+                                <td><code>mso_mdoc</code></td>
+                                <td>ISO 18013-5 mobile document configuration (mDL, mID)</td>
+                            </tr>
+                            <tr>
+                                <td><strong>W3C VC</strong></td>
+                                <td><code>jwt_vc_json</code></td>
+                                <td>W3C Verifiable Credentials Data Model 2.0 JSON Schema</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </section>
+
+                <section class="docs-section">
+                    <h2>Download Script</h2>
+                    <p>
+                        Use this shell script to download all credential metadata files organized by format:
+                    </p>
+                    <pre><code>#!/bin/bash
+# Download all credential metadata from SIROS Registry
+# Requires: curl, jq
+
+set -e
+
+API_URL="https://registry.siros.org/api/v1/schemas.json"
+OUTPUT_DIR="${1:-credentials}"
+
+echo "Fetching registry API..."
+REGISTRY=$(curl -s "$API_URL")
+
+# Create output directories
+mkdir -p "$OUTPUT_DIR"/{vctm,mdoc,vc}
+
+# Parse schemas and download each format file
+echo "$REGISTRY" | jq -c '.data[]' | while read -r schema; do
+    ID=$(echo "$schema" | jq -r '.id')
+
+    echo "Processing schema: $ID"
+
+    # Download each schema URI
+    echo "$schema" | jq -c '.schemaURIs[]' | while read -r uri_entry; do
+        FORMAT=$(echo "$uri_entry" | jq -r '.formatIdentifier')
+        URI=$(echo "$uri_entry" | jq -r '.uri')
+        FILENAME=$(basename "$URI")
+
+        case "$FORMAT" in
+            dc+sd-jwt) DIR="vctm" ;;
+            mso_mdoc)  DIR="mdoc" ;;
+            jwt_vc_json) DIR="vc" ;;
+            *) DIR="other" ; mkdir -p "$OUTPUT_DIR/$DIR" ;;
+        esac
+
+        curl -s "$URI" -o "$OUTPUT_DIR/$DIR/$FILENAME"
+        echo "  Downloaded: $DIR/$FILENAME"
+    done
+done
+
+# Generate summary
+TOTAL=$(echo "$REGISTRY" | jq '.total')
+echo ""
+echo "Download complete!"
+echo "  Total schemas: $TOTAL"
+echo "  Output directory: $OUTPUT_DIR/"</code></pre>
+                    <p>
+                        Save this script as <code>download-registry.sh</code> and run:
+                    </p>
+                    <pre><code>chmod +x download-registry.sh
+./download-registry.sh ./my-credentials</code></pre>
+                </section>
+
+                <section class="docs-section">
+                    <h2>Using with jq</h2>
+                    <p>
+                        Query the registry directly with <code>jq</code>:
+                    </p>
+
+                    <h3>List all schema IDs</h3>
+                    <pre><code>curl -s https://registry.siros.org/api/v1/schemas.json | \
+  jq -r '.data[].id'</code></pre>
+
+                    <h3>Get all supported formats</h3>
+                    <pre><code>curl -s https://registry.siros.org/api/v1/schemas.json | \
+  jq -r '.data[] | "\(.id): \(.supportedFormats | join(", "))"'</code></pre>
+
+                    <h3>Find high-assurance credentials</h3>
+                    <pre><code>curl -s https://registry.siros.org/api/v1/schemas.json | \
+  jq '.data[] | select(.attestationLoS == "high")'</code></pre>
+
+                    <h3>List all SD-JWT VC URIs</h3>
+                    <pre><code>curl -s https://registry.siros.org/api/v1/schemas.json | \
+  jq -r '.data[].schemaURIs[] | select(.formatIdentifier == "dc+sd-jwt") | .uri'</code></pre>
+                </section>
+
+                <section class="docs-section">
                     <h2>Programmatic Access</h2>
-                    <p>The API can be consumed from any language:</p>
+                    <p>
+                        The registry API can be fetched programmatically from any language:
+                    </p>
 
                     <h3>JavaScript/Node.js</h3>
                     <pre><code>const response = await fetch(
@@ -60,8 +214,17 @@
 );
 const registry = await response.json();
 
+// Iterate schemas
 for (const schema of registry.data) {
-  console.log(schema.id, schema.attestationLoS);
+  console.log(`${schema.id}: ${schema.attestationLoS}`);
+
+  // Download SD-JWT VC type metadata
+  const vctmURI = schema.schemaURIs
+    .find(u => u.formatIdentifier === 'dc+sd-jwt');
+  if (vctmURI) {
+    const vctm = await fetch(vctmURI.uri).then(r => r.json());
+    // Use credential type metadata...
+  }
 }</code></pre>
 
                     <h3>Python</h3>
@@ -71,47 +234,87 @@ registry = requests.get(
     'https://registry.siros.org/api/v1/schemas.json'
 ).json()
 
+# Iterate schemas
 for schema in registry['data']:
-    print(schema['id'], schema['attestationLoS'])</code></pre>
+    print(f"{schema['id']}: {schema['attestationLoS']}")
+
+    # Download SD-JWT VC type metadata
+    for uri_entry in schema['schemaURIs']:
+        if uri_entry['formatIdentifier'] == 'dc+sd-jwt':
+            vctm = requests.get(uri_entry['uri']).json()
+            # Use credential type metadata...</code></pre>
 
                     <h3>Go</h3>
-                    <pre><code>resp, _ := http.Get("https://registry.siros.org/api/v1/schemas.json")
+                    <pre><code>resp, _ := http.Get(
+    "https://registry.siros.org/api/v1/schemas.json",
+)
 defer resp.Body.Close()
 
 var registry struct {
     Data []struct {
         ID             string `json:"id"`
         AttestationLoS string `json:"attestationLoS"`
+        SchemaURIs     []struct {
+            FormatIdentifier string `json:"formatIdentifier"`
+            URI              string `json:"uri"`
+        } `json:"schemaURIs"`
     } `json:"data"`
 }
 json.NewDecoder(resp.Body).Decode(&amp;registry)
 
 for _, s := range registry.Data {
-    fmt.Println(s.ID, s.AttestationLoS)
+    fmt.Printf("%s: %s\n", s.ID, s.AttestationLoS)
 }</code></pre>
                 </section>
 
                 <section class="docs-section">
                     <h2>Use Cases</h2>
                     <ul>
-                        <li><strong>Issuer Configuration</strong> - Automatically configure credential
-                            issuance with display metadata and claim definitions</li>
-                        <li><strong>Verifier Setup</strong> - Pre-populate verifier applications with
-                            known credential types and validation schemas</li>
-                        <li><strong>Wallet Integration</strong> - Enable wallets to discover and
-                            properly render credentials from multiple issuers</li>
-                        <li><strong>CI/CD Pipelines</strong> - Fetch latest credential definitions
-                            during deployment to keep systems synchronized</li>
+                        <li>
+                            <strong>Issuer Configuration</strong> — Automatically configure credential
+                            issuance endpoints with display metadata and claim definitions
+                        </li>
+                        <li>
+                            <strong>Verifier Setup</strong> — Pre-populate verifier applications with
+                            known credential types and their validation schemas
+                        </li>
+                        <li>
+                            <strong>Wallet Integration</strong> — Enable wallets to discover and
+                            properly render credentials from multiple issuers
+                        </li>
+                        <li>
+                            <strong>CI/CD Pipelines</strong> — Fetch latest credential definitions
+                            during deployment to keep systems synchronized
+                        </li>
+                        <li>
+                            <strong>Monitoring</strong> — Track changes to credential definitions
+                            across the ecosystem
+                        </li>
+                    </ul>
+                </section>
+
+                <section class="docs-section">
+                    <h2>Caching Considerations</h2>
+                    <p>
+                        The registry is rebuilt periodically. When integrating:
+                    </p>
+                    <ul>
+                        <li>Cache responses locally to reduce API calls</li>
+                        <li>Consider polling at reasonable intervals (e.g., hourly or daily)</li>
+                        <li>The registry is served via GitHub Pages CDN with standard caching headers</li>
+                        <li>All API responses are JWS-signed — verify using the <a href="/api/v1/.well-known/jwks.json">published JWKS</a></li>
                     </ul>
                 </section>
 
                 <section class="docs-section">
                     <h2>Related Documentation</h2>
                     <ul>
-                        <li><a href="/docs/ts11.html">TS11 Compliance</a> - How this registry implements TS11</li>
-                        <li><a href="/docs/api.html">API Reference</a> - Full API documentation</li>
-                        <li><a href="/docs/register.html">Publish Your Credentials</a> - Add your credentials to the registry</li>
-                        <li><a href="/docs/support.html">Support</a> - Get help and report issues</li>
+                        <li><a href="/docs/ts11.html">TS11 Compliance</a> — How this registry implements TS11</li>
+                        <li><a href="/docs/api.html">API Reference</a> — Full API documentation</li>
+                        <li><a href="/docs/register.html">Publish Your Credentials</a> — Add your credentials to the registry</li>
+                        <li><a href="/docs/github-action.html">GitHub Action Setup</a> — Automate credential metadata generation</li>
+                        <li><a href="/docs/markdown-format.html">Markdown Format</a> — Define credentials in Markdown</li>
+                        <li><a href="/docs/support.html">Support</a> — Get help and report issues</li>
                     </ul>
                 </section>
             </article>

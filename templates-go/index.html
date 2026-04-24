@@ -17,6 +17,9 @@
             <nav class="main-nav">
                 <a href="/">Home</a>
                 <a href="/docs/register.html">Publish</a>
+                <a href="/docs/markdown-format.html">Markdown</a>
+                <a href="/docs/github-action.html">Setup</a>
+                <a href="/docs/integration.html">Integrate</a>
                 <a href="/docs/ts11.html">TS11</a>
                 <a href="/docs/api.html">API</a>
                 <a href="/docs/badges.html">Badges</a>
@@ -30,20 +33,43 @@
             <section class="hero">
                 <h1>Credential Type Registry</h1>
                 <p class="hero-subtitle">
-                    A TS11-compliant Catalogue of Attestations for SD-JWT VC, mDOC, and W3C VC ecosystems.
-                    Built on GitHub and signed with JWS. Open to all.
+                    A distributed collection of credential metadata for SD-JWT VC, mDOC, and W3C VC ecosystems.
+                    Built on GitHub and Markdown. Open to all.
                 </p>
                 <div class="stats">
+                    <div class="stat">
+                        <span class="stat-value">{{len .Orgs}}</span>
+                        <span class="stat-label">Organizations</span>
+                    </div>
                     <div class="stat">
                         <span class="stat-value">{{len .Credentials}}</span>
                         <span class="stat-label">Credentials</span>
                     </div>
                 </div>
+                <div class="hero-actions">
+                    <a href="/docs/register.html" class="btn btn-primary btn-large">Publish Your Credentials</a>
+                </div>
             </section>
 
             <section class="org-list">
-                <h2>Registered Attestations</h2>
-                {{if .Credentials}}
+                <h2>Organizations</h2>
+                {{if .Orgs}}
+                <div class="card-grid">
+                    {{range .Orgs}}
+                    <a href="/{{.Name}}/" class="card">
+                        <h3>{{.Name}}</h3>
+                        <p class="vctm-count">{{len .Credentials}} credential{{if ne (len .Credentials) 1}}s{{end}}</p>
+                    </a>
+                    {{end}}
+                </div>
+                {{else}}
+                <p class="empty-state">No credentials registered yet. <a href="/docs/register.html">Learn how to publish.</a></p>
+                {{end}}
+            </section>
+
+            {{if .Credentials}}
+            <section class="org-list">
+                <h2>All Attestations</h2>
                 <table class="claims-table">
                     <thead>
                         <tr>
@@ -52,24 +78,24 @@
                             <th>Formats</th>
                             <th>LoS</th>
                             <th>Binding</th>
+                            <th>Status</th>
                         </tr>
                     </thead>
                     <tbody>
                         {{range .Credentials}}
                         <tr>
-                            <td>{{.Org}}</td>
-                            <td><a href="/{{.Org}}/{{.Slug}}/">{{.Slug}}</a></td>
+                            <td><a href="/{{.Org}}/">{{.Org}}</a></td>
+                            <td><a href="/{{.Org}}/{{.Slug}}/">{{if .VCTM}}{{.VCTM.Name}}{{else}}{{.Slug}}{{end}}</a></td>
                             <td>{{join ", " .Schema.SupportedFormats}}</td>
                             <td>{{.Schema.AttestationLoS}}</td>
                             <td>{{.Schema.BindingType}}</td>
+                            <td>{{if .TS11Compliant}}<span class="badge badge-ts11" title="TS11 Compliant">TS11</span>{{end}}</td>
                         </tr>
                         {{end}}
                     </tbody>
                 </table>
-                {{else}}
-                <p class="empty-state">No credentials registered yet.</p>
-                {{end}}
             </section>
+            {{end}}
 
             <section class="about">
                 <h2>What is this Registry?</h2>
@@ -77,16 +103,22 @@
                     This registry implements a read-only subset of the
                     <a href="https://github.com/eu-digital-identity-wallet/eudi-doc-standards-and-technical-specifications/blob/main/docs/technical-specifications/ts11-interfaces-and-formats-for-catalogue-of-attributes-and-catalogue-of-schemes.md">ETSI TS11</a>
                     Catalogue of Attestations specification. It hosts credential metadata
-                    describing how to display and validate verifiable credentials across multiple formats:
+                    that describes how to display and validate verifiable credentials across multiple formats:
                 </p>
                 <ul>
                     <li><strong>SD-JWT VC</strong> — IETF SD-JWT Verifiable Credentials (VCTM)</li>
-                    <li><strong>mso_mdoc</strong> — ISO 18013-5 mobile documents</li>
+                    <li><strong>mso_mdoc</strong> — ISO 18013-5 mobile documents (mDL, etc.)</li>
                     <li><strong>W3C VCDM 2.0</strong> — W3C Verifiable Credentials Data Model</li>
                 </ul>
                 <p>
-                    All API responses are JWS-signed (RFC 7515). Verify signatures using the
-                    <a href="/api/v1/.well-known/jwks.json">published JWKS</a>.
+                    Credential metadata includes display properties (names, colors, logos), claim definitions,
+                    rendering templates, and validation schemas. All API responses are JWS-signed (RFC 7515).
+                    Verify signatures using the <a href="/api/v1/.well-known/jwks.json">published JWKS</a>.
+                </p>
+                <p>
+                    <a href="/docs/about.html">
+                        Learn more about the registry →
+                    </a>
                 </p>
             </section>
         </div>
