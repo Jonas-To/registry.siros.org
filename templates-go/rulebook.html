@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Attestation Rulebook — {{.Slug}}</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="icon" type="image/svg+xml" href="/static/images/favicon.svg">
+</head>
+<body>
+    <header class="site-header">
+        <div class="container">
+            <a href="/" class="logo">
+                <img src="/static/images/logo.svg" alt="SIROS" class="logo-image">
+                <span class="logo-subtitle">Credential Type Registry</span>
+            </a>
+            <nav class="main-nav">
+                <a href="/">Home</a>
+                <a href="/docs/ts11.html">TS11</a>
+                <a href="/docs/api.html">API</a>
+            </nav>
+        </div>
+    </header>
+    <main>
+        <div class="container">
+            <nav class="breadcrumb">
+                <a href="/">Home</a>
+                <span class="separator">/</span>
+                <a href="/{{.Org}}/{{.Slug}}/">{{.Slug}}</a>
+                <span class="separator">/</span>
+                <span class="current">Rulebook</span>
+            </nav>
+
+            <h1>Attestation Rulebook: {{.Slug}}</h1>
+            <p>Organisation: <strong>{{.Org}}</strong></p>
+
+            <article class="rulebook">
+                {{.Content}}
+            </article>
+        </div>
+    </main>
+    <footer class="site-footer">
+        <div class="container">
+            <p>&copy; 2026 SIROS Foundation. All rights reserved.</p>
+            <p><a href="/{{.Org}}/{{.Slug}}/">← Back to credential</a></p>
+        </div>
+    </footer>
+</body>
+</html>

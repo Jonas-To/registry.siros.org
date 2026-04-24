@@ -1,0 +1,19 @@
+# sources.yaml — registry.siros.org site instance
+# Declares which repositories provide credential schemas.
+#
+# Meta-sources auto-discover repos by GitHub topic.
+# Explicit sources (git:<url>) override any meta-source entry for the same repo.
+
+defaults:
+  branch: vctm
+
+sources:
+  # Auto-discover all repos tagged "vctm" in the sirosfoundation org
+  - "github:topic/vctm?org=sirosfoundation"
+
+  # Auto-discover repos tagged "vctm" in the SUNET org
+  - "github:topic/vctm?org=SUNET"
+
+  # Explicit entries
+  - "git:https://github.com/sirosfoundation/demo-credentials.git"
+  - "git:https://github.com/SUNET/vc.git"

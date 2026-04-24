@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API Reference — Credential Type Registry</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="icon" type="image/svg+xml" href="/static/images/favicon.svg">
+</head>
+<body>
+    <header class="site-header">
+        <div class="container">
+            <a href="/" class="logo">
+                <img src="/static/images/logo.svg" alt="SIROS" class="logo-image">
+                <span class="logo-subtitle">Credential Type Registry</span>
+            </a>
+            <nav class="main-nav">
+                <a href="/">Home</a>
+                <a href="/docs/ts11.html">TS11</a>
+                <a href="/docs/api.html">API</a>
+            </nav>
+        </div>
+    </header>
+    <main>
+        <div class="container">
+            <h1>API Reference</h1>
+
+            <h2>Base URL</h2>
+            <p><code>{{.BaseURL}}/api/v1</code></p>
+
+            <h2>GET /schemas</h2>
+            <p>Returns all registered attestation schemas as unsigned JSON (or JWS compact serialization when signing is enabled).</p>
+            <pre><code>curl {{.BaseURL}}/api/v1/schemas.json</code></pre>
+            <p>The response contains a <code>data</code> array of <code>SchemaMeta</code> objects,
+            plus <code>total</code>, <code>limit</code>, and <code>offset</code> fields.</p>
+
+            <h2>GET /schemas/{schemaId}</h2>
+            <p>Returns a single <code>SchemaMeta</code> object by UUID.</p>
+            <pre><code>curl {{.BaseURL}}/api/v1/schemas/{uuid}.json</code></pre>
+
+            <h2>Signature Verification</h2>
+            <p>When signing is enabled, responses are also available as <code>.jwt</code> files
+            (JWS compact serialization). Public keys are published as a JWKS at
+            <a href="{{.BaseURL}}/api/v1/.well-known/jwks.json"><code>{{.BaseURL}}/api/v1/.well-known/jwks.json</code></a>.</p>
+
+            <h2>OpenAPI Specification</h2>
+            <p><a href="{{.BaseURL}}/api/v1/openapi.yaml" class="btn btn-primary">Download OpenAPI 3.1 specification</a></p>
+
+            <h2>Statistics</h2>
+            <p>{{len .Credentials}} registered credential(s). Last built: {{.BuildTime}}.</p>
+        </div>
+    </main>
+    <footer class="site-footer">
+        <div class="container">
+            <p>&copy; 2026 SIROS Foundation. All rights reserved.</p>
+        </div>
+    </footer>
+</body>
+</html>

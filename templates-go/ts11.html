@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TS11 Compliance — Credential Type Registry</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="icon" type="image/svg+xml" href="/static/images/favicon.svg">
+</head>
+<body>
+    <header class="site-header">
+        <div class="container">
+            <a href="/" class="logo">
+                <img src="/static/images/logo.svg" alt="SIROS" class="logo-image">
+                <span class="logo-subtitle">Credential Type Registry</span>
+            </a>
+            <nav class="main-nav">
+                <a href="/">Home</a>
+                <a href="/docs/ts11.html">TS11</a>
+                <a href="/docs/api.html">API</a>
+            </nav>
+        </div>
+    </header>
+    <main>
+        <div class="container">
+            <h1>TS11 Compliance Information</h1>
+            <p>This registry implements a read-only subset of the
+            <a href="https://github.com/eu-digital-identity-wallet/eudi-doc-standards-and-technical-specifications/blob/main/docs/technical-specifications/ts11-interfaces-and-formats-for-catalogue-of-attributes-and-catalogue-of-schemes.md">
+            ETSI TS11</a> Catalogue of Attestations specification.</p>
+
+            <h2>Implemented Endpoints</h2>
+            <table class="claims-table">
+                <thead>
+                    <tr><th>Endpoint</th><th>Description</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td><code>GET /schemas</code></td><td>List all attestation schemas (JWS-signed)</td></tr>
+                    <tr><td><code>GET /schemas/{schemaId}</code></td><td>Get a single schema by ID (JWS-signed)</td></tr>
+                </tbody>
+            </table>
+
+            <h2>Response Format</h2>
+            <p>All API responses are JWS compact serialization (RFC 7515) containing a JWT payload
+            with <code>iss</code> and <code>iat</code> claims. The signing key is published at
+            <a href="/api/v1/.well-known/jwks.json"><code>/.well-known/jwks.json</code></a>.</p>
+
+            <h2>Data Model</h2>
+            <p>Each <code>SchemaMeta</code> object in the catalogue contains:</p>
+            <table class="claims-table">
+                <thead>
+                    <tr><th>Field</th><th>Description</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td><code>id</code></td><td>UUID v5 identifier derived from the credential URI</td></tr>
+                    <tr><td><code>version</code></td><td>Schema version string (default: "1.0")</td></tr>
+                    <tr><td><code>attestationLoS</code></td><td>Level of Assurance (low / substantial / high)</td></tr>
+                    <tr><td><code>bindingType</code></td><td>Key binding mechanism (cnf / holder)</td></tr>
+                    <tr><td><code>supportedFormats</code></td><td>Array of format identifiers (dc+sd-jwt, mso_mdoc, jwt_vc_json)</td></tr>
+                    <tr><td><code>schemaURIs</code></td><td>Array of format-to-URI mappings pointing to actual schema files</td></tr>
+                    <tr><td><code>rulebookURI</code></td><td>Optional link to the attestation rulebook</td></tr>
+                    <tr><td><code>trustedAuthorities</code></td><td>Array of trusted issuer references (future)</td></tr>
+                </tbody>
+            </table>
+
+            <h2>Governance Model</h2>
+            <p>This catalogue is managed via a git-based workflow. Changes to credential schemas
+            are submitted as pull requests to source repositories and reviewed before publication.
+            Write API endpoints (PUT, DELETE) are intentionally omitted — governance happens
+            through standard git review processes.</p>
+
+            <h2>Statistics</h2>
+            <p>{{len .Credentials}} registered credential(s). Last built: {{.BuildTime}}.</p>
+        </div>
+    </main>
+    <footer class="site-footer">
+        <div class="container">
+            <p>&copy; 2026 SIROS Foundation. All rights reserved.</p>
+        </div>
+    </footer>
+</body>
+</html>

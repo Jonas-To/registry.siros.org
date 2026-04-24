@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Credential Type Registry</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="icon" type="image/svg+xml" href="/static/images/favicon.svg">
+</head>
+<body>
+    <header class="site-header">
+        <div class="container">
+            <a href="/" class="logo">
+                <img src="/static/images/logo.svg" alt="SIROS" class="logo-image">
+                <span class="logo-subtitle">Credential Type Registry</span>
+            </a>
+            <nav class="main-nav">
+                <a href="/">Home</a>
+                <a href="/docs/ts11.html">TS11</a>
+                <a href="/docs/api.html">API</a>
+                <a href="/api/v1/openapi.yaml">OpenAPI</a>
+            </nav>
+        </div>
+    </header>
+    <main>
+        <div class="container">
+            <section class="hero">
+                <h1>Credential Type Registry</h1>
+                <p class="hero-subtitle">
+                    A TS11-compliant Catalogue of Attestations for SD-JWT VC, mDOC, and W3C VC ecosystems.
+                    Built on GitHub and signed with JWS. Open to all.
+                </p>
+                <div class="stats">
+                    <div class="stat">
+                        <span class="stat-value">{{len .Credentials}}</span>
+                        <span class="stat-label">Credentials</span>
+                    </div>
+                </div>
+            </section>
+
+            <section class="org-list">
+                <h2>Registered Attestations</h2>
+                {{if .Credentials}}
+                <table class="claims-table">
+                    <thead>
+                        <tr>
+                            <th>Organisation</th>
+                            <th>Credential</th>
+                            <th>Formats</th>
+                            <th>LoS</th>
+                            <th>Binding</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {{range .Credentials}}
+                        <tr>
+                            <td>{{.Org}}</td>
+                            <td><a href="/{{.Org}}/{{.Slug}}/">{{.Slug}}</a></td>
+                            <td>{{join ", " .Schema.SupportedFormats}}</td>
+                            <td>{{.Schema.AttestationLoS}}</td>
+                            <td>{{.Schema.BindingType}}</td>
+                        </tr>
+                        {{end}}
+                    </tbody>
+                </table>
+                {{else}}
+                <p class="empty-state">No credentials registered yet.</p>
+                {{end}}
+            </section>
+
+            <section class="about">
+                <h2>What is this Registry?</h2>
+                <p>
+                    This registry implements a read-only subset of the
+                    <a href="https://github.com/eu-digital-identity-wallet/eudi-doc-standards-and-technical-specifications/blob/main/docs/technical-specifications/ts11-interfaces-and-formats-for-catalogue-of-attributes-and-catalogue-of-schemes.md">ETSI TS11</a>
+                    Catalogue of Attestations specification. It hosts credential metadata
+                    describing how to display and validate verifiable credentials across multiple formats:
+                </p>
+                <ul>
+                    <li><strong>SD-JWT VC</strong> — IETF SD-JWT Verifiable Credentials (VCTM)</li>
+                    <li><strong>mso_mdoc</strong> — ISO 18013-5 mobile documents</li>
+                    <li><strong>W3C VCDM 2.0</strong> — W3C Verifiable Credentials Data Model</li>
+                </ul>
+                <p>
+                    All API responses are JWS-signed (RFC 7515). Verify signatures using the
+                    <a href="/api/v1/.well-known/jwks.json">published JWKS</a>.
+                </p>
+            </section>
+        </div>
+    </main>
+    <footer class="site-footer">
+        <div class="container">
+            <p>&copy; 2026 SIROS Foundation. All rights reserved.</p>
+            <p class="build-info">Last updated: {{.BuildTime}}</p>
+        </div>
+    </footer>
+</body>
+</html>
