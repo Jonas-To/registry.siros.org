@@ -45,6 +45,10 @@
                         <span class="stat-value">{{len .Credentials}}</span>
                         <span class="stat-label">Credentials</span>
                     </div>
+                    <div class="stat">
+                        <span class="stat-value">{{.TS11Count}}</span>
+                        <span class="stat-label">TS11 Compliant</span>
+                    </div>
                 </div>
                 <div class="hero-actions">
                     <a href="/docs/register.html" class="btn btn-primary btn-large">Publish Your Credentials</a>
@@ -56,9 +60,12 @@
                 {{if .Orgs}}
                 <div class="card-grid">
                     {{range .Orgs}}
-                    <a href="/{{.Name}}/" class="card">
-                        <h3>{{.Name}} {{if .HasTS11}}<span class="badge badge-ts11" title="Has TS11-compliant credentials">TS11</span>{{end}}</h3>
-                        <p class="vctm-count">{{len .Credentials}} credential{{if ne (len .Credentials) 1}}s{{end}}</p>
+                    <a href="/{{.Name}}/" class="card org-card">
+                        <img src="{{.AvatarURL}}" alt="{{.Name}}" class="org-avatar" loading="lazy" />
+                        <div class="org-card-info">
+                            <h3>{{.Name}} {{if .HasTS11}}<span class="badge badge-ts11" title="Has TS11-compliant credentials">TS11</span>{{end}}</h3>
+                            <p class="vctm-count">{{len .Credentials}} credential{{if ne (len .Credentials) 1}}s{{end}}</p>
+                        </div>
                     </a>
                     {{end}}
                 </div>

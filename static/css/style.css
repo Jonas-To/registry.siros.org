@@ -192,6 +192,29 @@ main {
     color: var(--color-text);
 }
 
+/* Org card with avatar */
+.org-card {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.org-avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    background-color: var(--color-border);
+}
+
+.org-card-info h3 {
+    margin: 0 0 0.25rem;
+}
+
+.org-card-info .vctm-count {
+    margin: 0;
+}
+
 .vctm-count {
     color: var(--color-text-muted);
     margin: 0 0 1rem;
