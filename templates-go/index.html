@@ -57,7 +57,7 @@
                 <div class="card-grid">
                     {{range .Orgs}}
                     <a href="/{{.Name}}/" class="card">
-                        <h3>{{.Name}}</h3>
+                        <h3>{{.Name}} {{if .HasTS11}}<span class="badge badge-ts11" title="Has TS11-compliant credentials">TS11</span>{{end}}</h3>
                         <p class="vctm-count">{{len .Credentials}} credential{{if ne (len .Credentials) 1}}s{{end}}</p>
                     </a>
                     {{end}}
