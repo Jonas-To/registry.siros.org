@@ -16,5 +16,4 @@ sources:
 
   # Explicit entries
   - "git:https://github.com/sirosfoundation/demo-credentials.git"
-  - "git:https://github.com/sirosfoundation/vc.git"
   - "git:https://github.com/leifj/vctm-template.git"
