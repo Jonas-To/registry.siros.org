@@ -145,12 +145,122 @@ rulebookURI: https://example.com/rulebook</code></pre>
                             <tr><th>Field</th><th>Required</th><th>Description</th></tr>
                         </thead>
                         <tbody>
-                            <tr><td><code>attestationLoS</code></td><td>Yes</td><td>Level of security: <code>low</code>, <code>substantial</code>, <code>high</code></td></tr>
-                            <tr><td><code>bindingType</code></td><td>Yes</td><td>Binding mechanism: <code>key</code>, <code>cnf</code>, <code>link</code></td></tr>
-                            <tr><td><code>rulebookURI</code></td><td>No</td><td>URI to the attestation policy rulebook</td></tr>
-                            <tr><td><code>trustedAuthorities</code></td><td>No</td><td>List of trusted authority references</td></tr>
+                            <tr><td><code>attestation_los</code></td><td>Yes</td><td>Level of security: <code>iso_18045_high</code>, <code>iso_18045_moderate</code>, <code>iso_18045_enhanced-basic</code>, <code>iso_18045_basic</code></td></tr>
+                            <tr><td><code>binding_type</code></td><td>Yes</td><td>Binding mechanism: <code>key</code>, <code>biometric</code>, <code>claim</code>, <code>none</code></td></tr>
+                            <tr><td><code>rulebook_uri</code></td><td>No</td><td>URI to the attestation policy rulebook</td></tr>
+                            <tr><td><code>trusted_authorities</code></td><td>No</td><td>List of trusted authority references</td></tr>
                         </tbody>
                     </table>
+                </section>
+
+                <section class="docs-section">
+                    <h2>Migrating from mtcvctm GitHub Action</h2>
+                    <p>
+                        If your repository previously used the
+                        <a href="https://github.com/sirosfoundation/mtcvctm">mtcvctm</a> GitHub Action
+                        to build and publish VCTM files, you can migrate to the new registry-cli workflow.
+                        The registry now discovers credentials directly from your repository — no
+                        build step or GitHub Action is required.
+                    </p>
+
+                    <h3>What changed</h3>
+                    <table class="claims-table">
+                        <thead>
+                            <tr><th>Old (mtcvctm Action)</th><th>New (registry-cli)</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>GitHub Action runs on every push</td>
+                                <td>No Action needed — registry discovers your repo</td>
+                            </tr>
+                            <tr>
+                                <td>Publishes to a separate <code>vctm</code> branch</td>
+                                <td>Credentials live on your default branch</td>
+                            </tr>
+                            <tr>
+                                <td>Generates <code>.vctm.json</code> files only</td>
+                                <td>Generates <code>.vctm.json</code>, <code>.mdoc.json</code>, <code>.vc.json</code></td>
+                            </tr>
+                            <tr>
+                                <td>No TS11 compliance metadata</td>
+                                <td>Full TS11 support via <code>schema-meta.yaml</code></td>
+                            </tr>
+                            <tr>
+                                <td>Legacy <code>vctm-registry.json</code> index</td>
+                                <td>TS11 <code>/api/v1/schemas.json</code> + attributes API</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <h3>Step-by-step migration</h3>
+                    <ol>
+                        <li>
+                            <strong>Remove the GitHub Action workflow.</strong>
+                            Delete <code>.github/workflows/publish-vctm.yml</code> (or whatever
+                            your mtcvctm workflow file is called).
+                        </li>
+                        <li>
+                            <strong>Keep your Markdown credential files.</strong>
+                            The <code>.md</code> files with <code>vct:</code> front matter work
+                            identically with registry-cli. No changes needed.
+                        </li>
+                        <li>
+                            <strong>Delete the <code>vctm</code> branch</strong> (optional).
+                            The generated JSON files on this branch are no longer consumed.
+                            <pre><code>git push origin --delete vctm</code></pre>
+                        </li>
+                        <li>
+                            <strong>Add <code>schema-meta.yaml</code> files</strong> for TS11 compliance.
+                            For each credential, create a matching YAML file:
+                            <pre><code># identity.schema-meta.yaml
+attestation_los: iso_18045_high    # Required
+binding_type: key                  # Required</code></pre>
+                            <p>See the <a href="/docs/register.html">Publish</a> page for the full
+                            list of required and optional fields.</p>
+                        </li>
+                        <li>
+                            <strong>Tag your repo</strong> with the <code>vctm</code> topic on GitHub.
+                            The registry discovers repos by topic. If your repo was already listed
+                            in <code>sources.yaml</code>, no action is needed.
+                        </li>
+                        <li>
+                            <strong>Wait for the next registry build</strong> (runs every 6 hours,
+                            or trigger manually via the
+                            <a href="https://github.com/sirosfoundation/registry.siros.org/actions">Actions tab</a>).
+                        </li>
+                    </ol>
+
+                    <h3>Old workflow (remove this)</h3>
+                    <pre><code># .github/workflows/publish-vctm.yml — DELETE THIS FILE
+name: Publish VCTM
+on:
+  push:
+    branches: [main]
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: sirosfoundation/mtcvctm@v1
+        with:
+          input-dir: .
+          output-dir: output
+          base-url: https://credentials.example.com
+          vctm-branch: vctm</code></pre>
+
+                    <h3>New setup (nothing to add)</h3>
+                    <pre><code># No GitHub Action needed! Your repository should contain:
+my-credentials/
+├── README.md
+├── identity.md                  # Your existing Markdown credentials
+├── identity.schema-meta.yaml    # NEW: add for TS11 compliance
+├── diploma.md
+└── diploma.schema-meta.yaml     # NEW: add for TS11 compliance</code></pre>
+                    <p>
+                        If you were using pre-built <code>.vctm.json</code> files instead of
+                        Markdown, those continue to work — place them on your default branch
+                        alongside their <code>schema-meta.yaml</code> files.
+                    </p>
                 </section>
 
                 <section class="docs-section">
