@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Catalogue of Attributes — Credential Type Registry</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="icon" type="image/svg+xml" href="/static/images/favicon.svg">
+</head>
+<body>
+    <header class="site-header">
+        <div class="container">
+            <a href="/" class="logo">
+                <img src="/static/images/logo.svg" alt="SIROS" class="logo-image">
+                <span class="logo-subtitle">Credential Type Registry</span>
+            </a>
+            <nav class="main-nav">
+                <a href="/">Home</a>
+                <a href="/docs/register.html">Publish</a>
+                <a href="/docs/markdown-format.html">Markdown</a>
+                <a href="/docs/github-action.html">Setup</a>
+                <a href="/docs/integration.html">Integrate</a>
+                <a href="/docs/attributes.html">Attributes</a>
+                <a href="/docs/ts11.html">TS11</a>
+                <a href="/docs/api.html">API</a>
+                <a href="/docs/badges.html">Badges</a>
+                <a href="/docs/support.html">Support</a>
+                <a href="/docs/about.html">About</a>
+            </nav>
+        </div>
+    </header>
+    <main>
+        <div class="container">
+            <nav class="breadcrumb">
+                <a href="/">Home</a>
+                <span class="separator">/</span>
+                <span class="current">Attributes</span>
+            </nav>
+
+            <article class="docs-page">
+                <h1>Catalogue of Attributes</h1>
+                <p class="lead">
+                    Cross-cutting index of all claims and attributes defined across registered
+                    credentials, per TS11 §4.2.
+                </p>
+
+                <section class="docs-section">
+                    <h2>Summary</h2>
+                    <p>{{len .Attributes}} attribute(s) across {{len .Credentials}} credential(s).
+                    Last built: {{.BuildTime}}.</p>
+                    <p>
+                        The attributes API is also available as machine-readable JSON at
+                        <a href="/api/v1/attributes.json"><code>/api/v1/attributes.json</code></a>.
+                        See the <a href="/docs/api.html">API Reference</a> for details.
+                    </p>
+                </section>
+
+                {{if .Attributes}}
+                <section class="docs-section">
+                    <h2>Attributes</h2>
+                    <table class="claims-table">
+                        <thead>
+                            <tr>
+                                <th>Attribute Path</th>
+                                <th>Display Name</th>
+                                <th>Used By</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {{range .Attributes}}
+                            <tr>
+                                <td><code>{{.Path}}</code></td>
+                                <td>{{.DisplayName}}</td>
+                                <td>
+                                    {{range $i, $c := .Credentials}}{{if $i}}, {{end}}<a href="/{{$c.Org}}/{{$c.Slug}}/">{{$c.Name}}</a>{{end}}
+                                </td>
+                            </tr>
+                            {{end}}
+                        </tbody>
+                    </table>
+                </section>
+                {{else}}
+                <section class="docs-section">
+                    <h2>No Attributes Found</h2>
+                    <p>Attributes are extracted from SD-JWT VC Type Metadata claims.
+                    Register credentials with VCTM files to populate this catalogue.</p>
+                </section>
+                {{end}}
+            </article>
+        </div>
+    </main>
+    <footer class="site-footer">
+        <div class="container">
+            <p>&copy; 2026 SIROS Foundation. All rights reserved.</p>
+        </div>
+    </footer>
+</body>
+</html>

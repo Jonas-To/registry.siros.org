@@ -20,6 +20,7 @@
                 <a href="/docs/markdown-format.html">Markdown</a>
                 <a href="/docs/github-action.html">Setup</a>
                 <a href="/docs/integration.html">Integrate</a>
+                <a href="/docs/attributes.html">Attributes</a>
                 <a href="/docs/ts11.html">TS11</a>
                 <a href="/docs/api.html">API</a>
                 <a href="/docs/badges.html">Badges</a>
@@ -44,6 +45,31 @@
             <h2>GET /schemas/{schemaId}</h2>
             <p>Returns a single <code>SchemaMeta</code> object by UUID.</p>
             <pre><code>curl {{.BaseURL}}/api/v1/schemas/{uuid}.json</code></pre>
+
+            <h2>GET /attributes</h2>
+            <p>Returns the Catalogue of Attributes — a cross-cutting index of all claims defined
+            across registered credentials (per TS11 §4.2).</p>
+            <pre><code>curl {{.BaseURL}}/api/v1/attributes.json</code></pre>
+            <p>The response contains a <code>data</code> array of <code>Attribute</code> objects,
+            plus <code>total</code>, <code>limit</code>, and <code>offset</code> fields.</p>
+            <p>Supports query parameters:</p>
+            <table class="claims-table">
+                <thead>
+                    <tr><th>Parameter</th><th>Description</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td><code>limit</code></td><td>Maximum number of results (default: all)</td></tr>
+                    <tr><td><code>offset</code></td><td>Number of results to skip (default: 0)</td></tr>
+                    <tr><td><code>nameSpace</code></td><td>Filter by namespace URI</td></tr>
+                    <tr><td><code>identifier</code></td><td>Filter by attribute identifier (substring match)</td></tr>
+                </tbody>
+            </table>
+
+            <h2>GET /attributes/{attrId}</h2>
+            <p>Returns a single <code>Attribute</code> object by identifier.</p>
+            <pre><code>curl {{.BaseURL}}/api/v1/attributes/{identifier}.json</code></pre>
+
+            <p>See the <a href="/docs/attributes.html">Catalogue of Attributes</a> page for a browsable view.</p>
 
             <h2>Signature Verification</h2>
             <p>When signing is enabled, responses are also available as <code>.jwt</code> files
