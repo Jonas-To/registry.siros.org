@@ -63,16 +63,14 @@
 
                     <div class="issue-cards">
                         <div class="issue-card">
-                            <h3>mtcvctm Tool &amp; GitHub Action</h3>
+                            <h3>mtcvctm Library</h3>
                             <p>
-                                For issues with the Markdown-to-credential-metadata converter, multi-format output generation,
-                                GitHub Action, or CLI tool:
+                                For issues with the Markdown-to-credential-metadata converter or multi-format output generation:
                             </p>
                             <ul>
                                 <li>Parsing or conversion errors</li>
                                 <li>Multi-format generation (SD-JWT VC, mDOC, W3C VC)</li>
-                                <li>GitHub Action workflow problems</li>
-                                <li>CLI tool bugs or new features</li>
+                                <li>Markdown format questions</li>
                                 <li>Documentation improvements</li>
                             </ul>
                             <a href="https://github.com/sirosfoundation/mtcvctm/issues/new/choose"
@@ -140,12 +138,6 @@
 
                     <h3>Development Setup</h3>
 
-                    <h4>mtcvctm (Go)</h4>
-                    <pre><code>git clone https://github.com/sirosfoundation/mtcvctm.git
-cd mtcvctm
-make build
-make test</code></pre>
-
                     <h4>registry-cli (Go)</h4>
                     <pre><code>git clone https://github.com/sirosfoundation/registry-cli.git
 cd registry-cli
@@ -173,7 +165,7 @@ registry-cli build --sources sources.yaml --templates templates-go --static stat
                         <tbody>
                             <tr>
                                 <td><strong>mtcvctm</strong></td>
-                                <td>Markdown to credential metadata converter, multi-format generator, and GitHub Action</td>
+                                <td>Markdown to credential metadata library (embedded in registry-cli)</td>
                                 <td>
                                     <a href="https://github.com/sirosfoundation/mtcvctm" target="_blank">Repository</a> ·
                                     <a href="https://github.com/sirosfoundation/mtcvctm/issues" target="_blank">Issues</a>

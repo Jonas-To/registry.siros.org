@@ -1,63 +1,94 @@
 # registry.siros.org
 
-A static site builder that aggregates and publishes Verifiable Credential Type Metadata (VCTM) files from multiple repositories.
+The SIROS Credential Type Registry — a public catalogue of credential type metadata implementing [ETSI TS11](https://www.etsi.org/).
 
 ## Overview
 
-This project builds a GitHub Pages site at `https://registry.siros.org` that:
+This project builds and deploys the static site at `https://registry.siros.org`. The site is built by [registry-cli](https://github.com/sirosfoundation/registry-cli), a Go tool that:
 
-- Collects VCTMs from repositories using the [mtcvctm](https://github.com/sirosfoundation/mtcvctm) GitHub Action
-- Organizes VCTMs by organization
-- Provides consistent, stable URLs for direct VCTM reference
-- Displays metadata with SIROS branding
+- **Discovers** credential repositories via `sources.yaml` (GitHub topic search and explicit git URLs)
+- **Clones** each repository and detects credential definitions (`.vctm.json`, `.mdoc.json`, `.vc.json`, `schema-meta.yaml`)
+- **Converts** Markdown credential definitions to metadata using the embedded [mtcvctm](https://github.com/sirosfoundation/mtcvctm) library
+- **Validates** credentials against the TS11 JSON Schema
+- **Generates** a static HTML site, TS11-compliant API (`/api/v1/schemas.json`), and DCAT-AP catalogue
+- **Signs** API responses with JWS (PKCS#11) when configured
 
 ## How It Works
 
-1. Repositories run the `mtcvctm` GitHub Action to generate VCTMs
-2. The action publishes VCTMs to a `vctm` branch with `.well-known/vctm-registry.json`
-3. This site builder fetches VCTMs from registered repositories
-4. A static site is generated and deployed to GitHub Pages
+1. `sources.yaml` declares which repositories to include — either by GitHub topic autodiscovery or explicit git URLs
+2. `registry-cli build` clones the repos, discovers credentials, and builds the site
+3. GitHub Actions runs the build every 6 hours and deploys to GitHub Pages
+
+### Autodiscovery
+
+Repositories tagged with the `vctm` topic on GitHub are automatically discovered. The `sources.yaml` file can also list explicit git URLs for repos that don't use topics or aren't on GitHub.
+
+### Credential Detection
+
+For each repository, registry-cli looks for:
+
+- **`schema-meta.yaml`** files — TS11 SchemaMeta envelopes declaring attestation level of security, binding type, and rulebook
+- **`.vctm.json`** / **`.mdoc.json`** / **`.vc.json`** files — credential metadata in SD-JWT VC, mso_mdoc, and W3C VC formats
+- **Markdown credential files** with `vct:` front matter — automatically converted to metadata using the embedded mtcvctm library (no external tool needed)
 
 ## URL Structure
 
-VCTMs are accessible at:
-```
-https://registry.siros.org/<org>/<vctm-name>.json
-```
+Credential metadata is accessible at:
 
-For example:
 ```
-https://registry.siros.org/sirosfoundation/identity-credential.json
+https://registry.siros.org/<org>/<slug>.vctm.json
+https://registry.siros.org/<org>/<slug>.mdoc.json
+https://registry.siros.org/<org>/<slug>.vc.json
 ```
 
-## Repository Requirements
+The TS11 API is at:
 
-To be included in the registry, a repository must:
-
-1. Have a `vctm` branch
-2. Contain `.well-known/vctm-registry.json` in that branch
-3. Have one or more `.json` VCTM files in the branch
+```
+https://registry.siros.org/api/v1/schemas.json       # All TS11-compliant schemas
+https://registry.siros.org/api/v1/schemas/<id>.json   # Individual schema
+```
 
 ## Configuration
 
-Edit `config/repositories.txt` to add repositories (one per line):
+Source repositories are declared in `sources.yaml`:
 
-```
-sirosfoundation/example-credentials
-myorg/my-credentials
+```yaml
+defaults:
+  branch: vctm
+
+sources:
+  # Autodiscover repos tagged "vctm" in an org
+  - "github:topic/vctm?org=sirosfoundation"
+
+  # Explicit git repository
+  - "git:https://github.com/example/credentials.git"
+
+  # With organization label
+  - url: "git:https://github.com/example/creds.git"
+    organization: "Example Org"
 ```
 
 ## Development
 
 ```bash
-# Install dependencies
-npm install
+# Install registry-cli (requires Go 1.22+)
+make install
 
 # Build locally
-npm run build
+make build
 
-# Preview site
-npm run serve
+# Preview at http://localhost:8000
+make serve
+```
+
+## Repository Structure
+
+```
+sources.yaml        # Source repository declarations
+templates-go/       # HTML templates (Go html/template)
+static/             # CSS, images, favicon
+Makefile            # Build targets
+.github/workflows/  # CI: build + deploy to GitHub Pages
 ```
 
 ## License

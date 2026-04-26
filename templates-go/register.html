@@ -37,78 +37,112 @@
             </nav>
 
             <article class="docs-page">
-                <h1>Add Your Repository</h1>
+                <h1>Publish Your Credentials</h1>
                 <p class="lead">
-                    Add your credential definitions to the Registry by adding the <code>vctm</code> topic
-                    to your GitHub repository. The registry automatically discovers and includes repositories
-                    with valid content.
+                    Add your credential definitions to the Registry. The registry discovers
+                    repositories automatically via GitHub topics, or you can request explicit
+                    inclusion via <code>sources.yaml</code>.
                 </p>
 
                 <section class="docs-section">
-                    <h2>Step 1: Set Up Your Repository</h2>
+                    <h2>Option A: Autodiscovery (Recommended)</h2>
                     <p>
-                        Use the <a href="/docs/github-action.html">mtcvctm GitHub Action</a> to automatically:
-                    </p>
-                    <ul>
-                        <li>Generate credential metadata from Markdown documentation (SD-JWT VC, mDOC, W3C VC)</li>
-                        <li>Create and maintain the <code>vctm</code> branch</li>
-                        <li>Build the <code>.well-known/vctm-registry.json</code> manifest</li>
-                    </ul>
-                    <p>
-                        See the <a href="/docs/github-action.html">Setup Guide</a> for detailed instructions.
-                    </p>
-                </section>
-
-                <section class="docs-section">
-                    <h2>Step 2: Add the <code>vctm</code> Topic</h2>
-                    <p>
-                        The registry discovers repositories by searching for the <code>vctm</code> topic on GitHub:
+                        The registry automatically discovers GitHub repositories tagged with the
+                        <code>vctm</code> topic in configured organizations. To get your credentials
+                        included:
                     </p>
                     <ol>
-                        <li>Go to your repository on GitHub</li>
-                        <li>Click the gear icon next to <strong>About</strong> in the right sidebar</li>
-                        <li>In the <strong>Topics</strong> field, type <code>vctm</code> and press Enter</li>
-                        <li>Click <strong>Save changes</strong></li>
+                        <li>
+                            <strong>Create credential files</strong> in your repository — either
+                            <a href="/docs/markdown-format.html">Markdown definitions</a> with
+                            <code>vct:</code> front matter, or pre-built <code>.vctm.json</code>,
+                            <code>.mdoc.json</code>, <code>.vc.json</code> files
+                        </li>
+                        <li>
+                            <strong>Add a <code>schema-meta.yaml</code></strong> alongside each credential
+                            to declare TS11 properties (attestation level, binding type, rulebook). This
+                            is required for TS11 compliance
+                        </li>
+                        <li>
+                            <strong>Add the <code>vctm</code> topic</strong> to your GitHub repository:
+                            click the gear icon next to <em>About</em> in the sidebar, type
+                            <code>vctm</code> in the Topics field, and save
+                        </li>
+                        <li>
+                            <strong>Wait for the next build cycle</strong> — the registry rebuilds every
+                            6 hours. Your credentials will appear at
+                            <code>https://registry.siros.org/your-org/</code>
+                        </li>
                     </ol>
                 </section>
 
                 <section class="docs-section">
-                    <h2>Step 3: Wait for Discovery</h2>
-                    <p>After adding the <code>vctm</code> topic, the registry will:</p>
-                    <ol>
-                        <li><strong>Discover</strong> your repository during the next build cycle</li>
-                        <li><strong>Validate</strong> that the <code>vctm</code> branch exists and contains
-                            <code>.well-known/vctm-registry.json</code></li>
-                        <li><strong>Publish</strong> your credential types at
-                            <code>https://registry.siros.org/your-org/</code></li>
-                    </ol>
+                    <h2>Option B: Explicit Registration</h2>
                     <p>
-                        This typically happens within 6 hours. If your repository doesn't appear,
-                        verify that your <code>vctm</code> branch is set up correctly.
+                        For repositories outside configured GitHub organizations, or for non-GitHub
+                        repositories, open a pull request to add your repository to
+                        <a href="https://github.com/sirosfoundation/registry.siros.org/blob/main/sources.yaml"
+                           target="_blank"><code>sources.yaml</code></a>:
+                    </p>
+                    <pre><code>sources:
+  - "git:https://github.com/your-org/your-credentials.git"
+
+  # Or with an explicit organization label:
+  - url: "git:https://your-git-host.example/repo.git"
+    organization: "Your Org Name"</code></pre>
+                </section>
+
+                <section class="docs-section">
+                    <h2>Repository Structure</h2>
+                    <p>Your repository should contain credential files at the top level:</p>
+                    <pre><code>your-credentials/
+├── identity.md                  # Markdown credential definition
+├── identity.schema-meta.yaml    # TS11 metadata (optional but recommended)
+├── identity.vctm.json           # Pre-built SD-JWT VC metadata (optional)
+├── identity.mdoc.json           # Pre-built mDOC config (optional)
+├── identity.vc.json             # Pre-built W3C VC schema (optional)
+└── rulebook.md                  # Attestation rulebook (optional)</code></pre>
+                    <p>
+                        If you provide Markdown files with <code>vct:</code> front matter, the
+                        registry will automatically generate the <code>.vctm.json</code>,
+                        <code>.mdoc.json</code>, and <code>.vc.json</code> files — no external
+                        tools or GitHub Actions required.
                     </p>
                 </section>
 
                 <section class="docs-section">
-                    <h2>Requirements</h2>
-                    <p>Your repository must have:</p>
-                    <ul>
-                        <li>A <code>vctm</code> branch (created automatically by the GitHub Action)</li>
-                        <li>A manifest at <code>.well-known/vctm-registry.json</code></li>
-                        <li>Valid credential metadata files (<code>.vctm.json</code>, <code>.mdoc.json</code>, or <code>.vc.json</code>)</li>
-                    </ul>
+                    <h2>TS11 Compliance</h2>
+                    <p>
+                        To appear in the TS11-compliant API at <code>/api/v1/schemas.json</code>,
+                        your credential needs a <code>schema-meta.yaml</code> file:
+                    </p>
+                    <pre><code># identity.schema-meta.yaml
+attestationLoS: high
+bindingType: key
+rulebookURI: https://example.com/rulebook
+trustedAuthorities:
+  - frameworkType: EUDI
+    value: https://eudi.example.com</code></pre>
+                    <p>
+                        Credentials without <code>schema-meta.yaml</code> are still included in the
+                        registry site and the legacy API, but are not listed in the TS11 catalogue.
+                    </p>
                 </section>
 
                 <section class="docs-section">
                     <h2>Need Help?</h2>
-                    <p>If you encounter issues or have questions:</p>
                     <ul>
                         <li>
                             <a href="https://github.com/sirosfoundation/registry.siros.org/issues" target="_blank">
                                 Open an issue</a> on the registry repository
                         </li>
                         <li>
-                            Check the <a href="https://github.com/sirosfoundation/mtcvctm" target="_blank">
-                                mtcvctm documentation</a> for the CLI tool
+                            See the <a href="/docs/markdown-format.html">Markdown Format Reference</a>
+                            for credential authoring
+                        </li>
+                        <li>
+                            Check the <a href="https://github.com/sirosfoundation/registry-cli" target="_blank">
+                                registry-cli documentation</a> for the build tool
                         </li>
                         <li>Review existing repositories in the registry for examples</li>
                     </ul>

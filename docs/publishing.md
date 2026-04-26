@@ -1,5 +1,10 @@
 # Publishing VCTM Files
 
+> **Note:** When using the [SIROS Credential Type Registry](https://registry.siros.org),
+> credential conversion from Markdown to metadata JSON is handled automatically by
+> `registry-cli` using the embedded mtcvctm library. You do not need to run mtcvctm
+> separately. This page documents the standalone mtcvctm CLI for use outside the registry.
+
 mtcvctm supports two workflows for publishing credential metadata:
 
 1. **Markdown-based** - Author credentials in markdown, auto-convert to VCTM

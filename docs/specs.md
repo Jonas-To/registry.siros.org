@@ -1,30 +1,48 @@
-# A site-builder for registry.siros.org
+# Site Builder for registry.siros.org
 
 ## TL;DR
 
-This is the site builder for registry.siros.org: A collection of static assets and github actions that builds registry.siros.org from a list of repositories that run the mtcvctm action. 
+The registry site is built by [registry-cli](https://github.com/sirosfoundation/registry-cli), a Go tool that discovers credential repositories from `sources.yaml`, clones them, detects credential metadata, validates against the TS11 JSON Schema, and generates the static site deployed to GitHub Pages.
 
-## Specification
+## Architecture
 
-The site builder is designed to publish a site on github pages. The site is configured using a text-file that contains a list (one per row) of repositories (future versions will support non-github repositories) that is expected to fulfill the following requirements:
+### Build Pipeline
 
-1. The repo has a branch "vctm" 
-2. The repo has a file .well-known/vctm-registry.json in the "vctm" branch
-3. The repo has a set of vctm files in the "vctm" branch
+1. **Source Resolution** — `sources.yaml` declares repositories via GitHub topic autodiscovery (`github:topic/vctm?org=...`) and explicit git URLs (`git:https://...`)
+2. **Repository Cloning** — Each source repository is cloned (shallow, default branch from `sources.yaml`)
+3. **Credential Detection** — The tool scans for `schema-meta.yaml`, `.vctm.json`, `.mdoc.json`, `.vc.json` files and Markdown files with `vct:` front matter
+4. **Markdown Conversion** — Markdown credential files are converted to metadata JSON using the embedded [mtcvctm](https://github.com/sirosfoundation/mtcvctm) library (no external binary required)
+5. **TS11 Validation** — Each credential is validated against the TS11 JSON Schema; only compliant schemas appear in the API
+6. **Site Generation** — HTML pages, API payloads (`/api/v1/schemas.json`), OpenAPI spec, and DCAT-AP catalogue are generated
+7. **Deployment** — GitHub Actions deploys the built site to GitHub Pages every 6 hours
 
-The site builder runs a github action on push and when triggered from the mktcvctm github action.
+### URL Structure
 
-The generated site should be branded to the siros brand and should organize VCTMs by organization and should provide static and consistent URLs that allow direct download and reference of VCTMs from external consumers as https://registry.siros.org/<org>/<vctm-path>
+```
+https://registry.siros.org/<org>/<slug>.vctm.json     # SD-JWT VC metadata
+https://registry.siros.org/<org>/<slug>.mdoc.json      # mso_mdoc configuration
+https://registry.siros.org/<org>/<slug>.vc.json        # W3C VC schema
+https://registry.siros.org/api/v1/schemas.json         # TS11 catalogue API
+https://registry.siros.org/api/v1/schemas/<id>.json    # Individual schema
+https://registry.siros.org/catalog.jsonld              # DCAT-AP catalogue
+```
 
-The html view should be responsive, clean and allow for drilldown into information about the source, owner and history of the published VCTMs
+### Schema Identifiers
+
+Each credential is assigned a deterministic UUID v5 identifier derived from `org/slug`, using the TS11 namespace UUID. This ensures stable, reproducible IDs across builds.
+
+### Build Dependencies
+
+- **Go 1.22+** — registry-cli is a Go binary
+- **registry-cli** — the build tool (`go install github.com/sirosfoundation/registry-cli/cmd/registry-cli@latest`)
+- **GITHUB_TOKEN** — for GitHub API access during topic-based autodiscovery
 
 ## VCTM Publication
 
-Repositories can publish VCTMs using the mtcvctm GitHub Action, which supports:
+Repositories can provide credential metadata in two ways:
 
-- **Markdown-based authoring** - Convert markdown credential definitions to VCTM JSON
-- **Raw JSON publication** - Publish existing VCTM JSON files directly
-- **Normalization rules** - Automatic fixing of legacy field names and missing fields
+1. **Pre-built metadata files** — Place `.vctm.json`, `.mdoc.json`, `.vc.json` files directly in the repository alongside a `schema-meta.yaml` for TS11 compliance
+2. **Markdown authoring** — Write credential definitions as Markdown with `vct:` YAML front matter; registry-cli converts them automatically using the embedded mtcvctm library
 
-See [Publishing VCTM Files](publishing.md) for detailed documentation on publishing workflows and normalization.
+See [Markdown Format](../docs/markdown-format.html) for the credential authoring format.
 

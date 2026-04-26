@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GitHub Action Setup — Credential Type Registry</title>
+    <title>Setup Guide — Credential Type Registry</title>
     <link rel="stylesheet" href="/static/css/style.css">
     <link rel="icon" type="image/svg+xml" href="/static/images/favicon.svg">
 </head>
@@ -33,133 +33,132 @@
             <nav class="breadcrumb">
                 <a href="/">Home</a>
                 <span class="separator">/</span>
-                <span class="current">GitHub Action Setup</span>
+                <span class="current">Setup Guide</span>
             </nav>
 
             <article class="docs-page">
-                <h1>mtcvctm GitHub Action</h1>
+                <h1>Credential Repository Setup</h1>
                 <p class="lead">
-                    Automatically generate and publish credential metadata in multiple formats
-                    (SD-JWT VC, mDOC, W3C VC) from Markdown documentation using the mtcvctm GitHub Action.
+                    Set up a repository with credential definitions that the registry
+                    can discover and publish automatically.
                 </p>
 
                 <section class="docs-section">
                     <h2>Overview</h2>
                     <p>
-                        <a href="https://github.com/sirosfoundation/mtcvctm" target="_blank" class="btn btn-primary">View on GitHub</a>
-                        <a href="/docs/support.html" class="btn">Report Issues</a>
+                        The registry discovers credentials directly from your repository —
+                        no GitHub Action or separate build step is needed. You author
+                        credential definitions in your repo, and the registry's build
+                        pipeline clones your repo, detects credentials, and publishes them.
                     </p>
-                    <p>The <code>mtcvctm</code> GitHub Action automates:</p>
-                    <ul>
-                        <li>Converting Markdown credential documentation to credential metadata JSON</li>
-                        <li><strong>Generating multiple output formats:</strong> SD-JWT VC (VCTM), mso_mdoc (ISO 18013-5), and W3C VCDM 2.0</li>
-                        <li>Maintaining a dedicated <code>vctm</code> branch with generated files</li>
-                        <li>Creating the registry manifest for discovery</li>
-                    </ul>
                 </section>
 
                 <section class="docs-section">
                     <h2>Quick Start</h2>
-                    <p>Create <code>.github/workflows/vctm.yml</code> in your repository:</p>
-                    <pre><code>name: Generate Credential Metadata
+                    <ol>
+                        <li>
+                            <strong>Create a credential Markdown file</strong> (see
+                            <a href="/docs/markdown-format.html">Markdown Format</a>):
+                            <pre><code>---
+vct: https://credentials.example.com/identity
+---
 
-on:
-  push:
-    branches: [main]
-    paths:
-      - 'credentials/**/*.md'
-  workflow_dispatch:
+# Identity Credential
 
-permissions:
-  contents: write
+A national identity credential.
 
-jobs:
-  generate:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
+## Claims
 
-      - name: Generate Credential Metadata
-        uses: sirosfoundation/mtcvctm-action@v1
-        with:
-          input-dir: credentials
-          output-branch: vctm
-          base-url: https://example.com/credentials</code></pre>
+- `given_name` (string): Given name of the holder [mandatory]
+- `family_name` (string): Family name of the holder [mandatory]
+- `birth_date` (string): Date of birth in ISO 8601 [mandatory]</code></pre>
+                        </li>
+                        <li>
+                            <strong>Add a <code>schema-meta.yaml</code></strong> for TS11 compliance:
+                            <pre><code># identity.schema-meta.yaml
+attestationLoS: high
+bindingType: key
+rulebookURI: https://example.com/rulebook</code></pre>
+                        </li>
+                        <li>
+                            <strong>Tag your repo</strong> with the <code>vctm</code> topic on
+                            GitHub (or request addition to <code>sources.yaml</code>)
+                        </li>
+                        <li>
+                            <strong>Done.</strong> The registry discovers your repo and publishes
+                            the credentials within 6 hours
+                        </li>
+                    </ol>
                 </section>
 
                 <section class="docs-section">
-                    <h2>Action Inputs</h2>
+                    <h2>Credential File Formats</h2>
+                    <p>The registry supports two approaches for providing credentials:</p>
+
+                    <h3>Markdown (Recommended)</h3>
+                    <p>
+                        Write credential definitions in Markdown with <code>vct:</code> YAML front matter.
+                        The registry automatically converts them to all supported metadata formats
+                        (SD-JWT VC, mDOC, W3C VC) using the embedded
+                        <a href="https://github.com/sirosfoundation/mtcvctm" target="_blank">mtcvctm</a> library.
+                    </p>
+                    <p>
+                        See the <a href="/docs/markdown-format.html">Markdown Format Reference</a>
+                        for the full specification.
+                    </p>
+
+                    <h3>Pre-built JSON</h3>
+                    <p>
+                        If you already have credential metadata JSON files, place them directly
+                        in your repository:
+                    </p>
+                    <ul>
+                        <li><code>.vctm.json</code> — SD-JWT VC Type Metadata</li>
+                        <li><code>.mdoc.json</code> — mso_mdoc (ISO 18013-5) configuration</li>
+                        <li><code>.vc.json</code> — W3C Verifiable Credentials Data Model 2.0</li>
+                    </ul>
+                </section>
+
+                <section class="docs-section">
+                    <h2>Example Repository Layout</h2>
+                    <pre><code>my-credentials/
+├── README.md
+├── identity.md                  # Markdown credential definition
+├── identity.schema-meta.yaml    # TS11 metadata
+├── diploma.md                   # Another credential
+├── diploma.schema-meta.yaml
+└── license/
+    ├── driving-license.vctm.json    # Pre-built JSON
+    ├── driving-license.mdoc.json
+    └── driving-license.schema-meta.yaml</code></pre>
+                </section>
+
+                <section class="docs-section">
+                    <h2>TS11 Schema Metadata</h2>
+                    <p>
+                        The <code>schema-meta.yaml</code> file declares TS11 properties for a
+                        credential. The filename prefix should match the credential file:
+                    </p>
                     <table class="docs-table">
                         <thead>
-                            <tr><th>Input</th><th>Required</th><th>Default</th><th>Description</th></tr>
+                            <tr><th>Field</th><th>Required</th><th>Description</th></tr>
                         </thead>
                         <tbody>
-                            <tr><td><code>input-dir</code></td><td>Yes</td><td>—</td><td>Directory containing Markdown credential definitions</td></tr>
-                            <tr><td><code>output-branch</code></td><td>No</td><td><code>vctm</code></td><td>Branch to publish generated metadata to</td></tr>
-                            <tr><td><code>base-url</code></td><td>Yes</td><td>—</td><td>Base URL for VCT URIs</td></tr>
-                            <tr><td><code>config-file</code></td><td>No</td><td><code>mtcvctm.yaml</code></td><td>Path to configuration file</td></tr>
+                            <tr><td><code>attestationLoS</code></td><td>Yes</td><td>Level of security: <code>low</code>, <code>substantial</code>, <code>high</code></td></tr>
+                            <tr><td><code>bindingType</code></td><td>Yes</td><td>Binding mechanism: <code>key</code>, <code>cnf</code>, <code>link</code></td></tr>
+                            <tr><td><code>rulebookURI</code></td><td>No</td><td>URI to the attestation policy rulebook</td></tr>
+                            <tr><td><code>trustedAuthorities</code></td><td>No</td><td>List of trusted authority references</td></tr>
                         </tbody>
                     </table>
                 </section>
 
                 <section class="docs-section">
-                    <h2>Generated Output</h2>
-                    <p>The action creates the following structure in the <code>vctm</code> branch:</p>
-                    <pre><code>vctm/
-├── .well-known/
-│   └── vctm-registry.json
-├── credentials/
-│   ├── IdentityCredential.vctm.json
-│   ├── IdentityCredential.mdoc.json
-│   ├── IdentityCredential.vc.json
-│   └── ...
-└── README.md</code></pre>
-                </section>
-
-                <section class="docs-section">
-                    <h2>Manual Setup (Without Action)</h2>
-                    <p>You can also use the <code>mtcvctm</code> CLI directly:</p>
-                    <pre><code># Install mtcvctm
-go install github.com/sirosfoundation/mtcvctm@latest
-
-# Generate credential metadata
-mtcvctm generate -i credentials -o dist/vctm -b https://example.com/credentials</code></pre>
-                </section>
-
-                <section class="docs-section">
-                    <h2>Troubleshooting</h2>
-
-                    <h3>Action fails with "permission denied"</h3>
-                    <p>Ensure the workflow has write permissions:</p>
-                    <pre><code>permissions:
-  contents: write</code></pre>
-
-                    <h3>Credential metadata not updating</h3>
-                    <p>Check that your <code>paths</code> filter includes all relevant files:</p>
-                    <pre><code>on:
-  push:
-    paths:
-      - 'credentials/**/*.md'
-      - 'mtcvctm.yaml'</code></pre>
-                </section>
-
-                <section class="docs-section">
                     <h2>Next Steps</h2>
-                    <ol>
-                        <li>Verify the <code>vctm</code> branch exists and contains valid metadata files</li>
-                        <li>Check that <code>.well-known/vctm-registry.json</code> lists all your credential types</li>
-                        <li><a href="/docs/register.html">Register your repository</a> with the SIROS Registry</li>
-                    </ol>
-                </section>
-
-                <section class="docs-section">
-                    <h2>Resources</h2>
                     <ul>
-                        <li><a href="https://github.com/sirosfoundation/mtcvctm" target="_blank"><strong>mtcvctm on GitHub</strong></a></li>
-                        <li><a href="https://datatracker.ietf.org/doc/draft-ietf-oauth-sd-jwt-vc/" target="_blank">SD-JWT VC Specification</a></li>
-                        <li><a href="/docs/markdown-format.html">Markdown Format Reference</a></li>
-                        <li><a href="/docs/register.html">Register Your Credentials</a></li>
-                        <li><a href="/docs/support.html">Support &amp; Contributing</a></li>
+                        <li><a href="/docs/register.html">Publish</a> — register your repository with the registry</li>
+                        <li><a href="/docs/markdown-format.html">Markdown Format</a> — credential authoring reference</li>
+                        <li><a href="/docs/ts11.html">TS11</a> — ETSI TS11 compliance details</li>
+                        <li><a href="/docs/integration.html">Integration</a> — use the registry API programmatically</li>
                     </ul>
                 </section>
             </article>

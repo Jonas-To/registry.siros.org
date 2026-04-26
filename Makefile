@@ -1,4 +1,4 @@
-.PHONY: all build serve clean install help build-legacy
+.PHONY: all build serve clean install help
 
 # Configuration
 PORT ?= 8000
@@ -31,10 +31,6 @@ serve: build
 clean:
 	rm -rf $(OUTPUT)/
 
-# Legacy build (Node.js — archived, use for comparison only)
-build-legacy:
-	npm ci && npm run build
-
 # Help
 help:
 	@echo "Available targets:"
@@ -43,5 +39,4 @@ help:
 	@echo "  make serve         - Build and start local dev server at http://localhost:$(PORT)"
 	@echo "  make serve PORT=N  - Use a different port"
 	@echo "  make clean         - Remove build artifacts"
-	@echo "  make build-legacy  - Build using archived Node.js pipeline"
 	@echo "  make help          - Show this help message"
