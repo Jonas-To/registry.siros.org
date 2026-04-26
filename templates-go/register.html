@@ -114,15 +114,29 @@
                     <h2>TS11 Compliance</h2>
                     <p>
                         To appear in the TS11-compliant API at <code>/api/v1/schemas.json</code>,
-                        your credential needs a <code>schema-meta.yaml</code> file:
+                        your credential needs a <code>schema-meta.yaml</code> file with just two
+                        required fields:
                     </p>
                     <pre><code># identity.schema-meta.yaml
-attestationLoS: high
-bindingType: key
-rulebookURI: https://example.com/rulebook
-trustedAuthorities:
-  - frameworkType: EUDI
-    value: https://eudi.example.com</code></pre>
+attestation_los: iso_18045_high    # Required: high / moderate / enhanced-basic / basic
+binding_type: key                  # Required: key / biometric / claim / none</code></pre>
+                    <p>
+                        You can also set optional fields:
+                    </p>
+                    <pre><code># Optional fields
+version: "1.0"                                # Default: "0.1.0"
+rulebook_uri: https://example.com/rulebook    # Link to attestation rulebook
+trusted_authorities:                          # Trust framework references
+  - framework_type: etsi_tl
+    value: https://example.com/tl</code></pre>
+                    <p>
+                        The following fields are <strong>auto-generated</strong> and should not be set manually:
+                    </p>
+                    <ul>
+                        <li><code>id</code> — UUID v5 derived from the registry URL + org/slug</li>
+                        <li><code>supportedFormats</code> — detected from files present (<code>.vctm.json</code> → <code>dc+sd-jwt</code>, <code>.mdoc.json</code> → <code>mso_mdoc</code>, <code>.vc.json</code> → <code>jwt_vc_json</code>)</li>
+                        <li><code>schemaURIs</code> — generated from detected formats + base URL</li>
+                    </ul>
                     <p>
                         Credentials without <code>schema-meta.yaml</code> are still included in the
                         registry site and the legacy API, but are not listed in the TS11 catalogue.
