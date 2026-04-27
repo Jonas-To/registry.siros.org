@@ -63,8 +63,8 @@ a:hover {
 
 .site-header .container {
     display: flex;
-    justify-content: space-between;
     align-items: center;
+    gap: 2rem;
 }
 
 .logo {
@@ -91,8 +91,13 @@ a:hover {
 }
 
 .main-nav {
+    flex: 1;
     display: flex;
     gap: 1.5rem;
+}
+
+.main-nav .nav-spacer {
+    flex: 1;
 }
 
 .main-nav a {
@@ -866,6 +871,70 @@ section h2 {
     }
 }
 
+/* Documentation Layout — sidebar + content */
+.docs-layout {
+    display: flex;
+    gap: 2rem;
+    align-items: flex-start;
+}
+
+.docs-sidebar {
+    width: 220px;
+    flex-shrink: 0;
+    position: sticky;
+    top: 80px;
+    align-self: flex-start;
+}
+
+.docs-sidebar h4 {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--color-text-muted);
+    margin: 1.25rem 0 0.5rem;
+    padding: 0;
+}
+
+.docs-sidebar h4:first-child {
+    margin-top: 0;
+}
+
+.docs-sidebar ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.docs-sidebar li {
+    margin: 0;
+}
+
+.docs-sidebar a {
+    display: block;
+    padding: 0.35rem 0.75rem;
+    color: var(--color-text-muted);
+    text-decoration: none;
+    border-radius: var(--border-radius);
+    font-size: 0.875rem;
+    transition: background-color 0.15s, color 0.15s;
+}
+
+.docs-sidebar a:hover {
+    color: var(--color-primary);
+    background-color: var(--color-bg-secondary);
+}
+
+.docs-sidebar a.active {
+    color: var(--color-primary);
+    background-color: var(--color-bg-secondary);
+    font-weight: 600;
+}
+
+.docs-content {
+    flex: 1;
+    min-width: 0;
+}
+
 /* Documentation Pages */
 .docs-page {
     max-width: 800px;
@@ -1136,6 +1205,18 @@ section h2 {
 
 /* Responsive docs */
 @media (max-width: 768px) {
+    .docs-layout {
+        flex-direction: column;
+    }
+    
+    .docs-sidebar {
+        width: 100%;
+        position: static;
+        border-bottom: 1px solid var(--color-border);
+        padding-bottom: 1rem;
+        margin-bottom: 1rem;
+    }
+
     .docs-page h1 {
         font-size: 2rem;
     }

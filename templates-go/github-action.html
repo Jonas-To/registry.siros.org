@@ -15,16 +15,10 @@
                 <span class="logo-subtitle">Credential Type Registry</span>
             </a>
             <nav class="main-nav">
-                <a href="/">Home</a>
-                <a href="/docs/register.html">Publish</a>
-                <a href="/docs/markdown-format.html">Markdown</a>
-                <a href="/docs/github-action.html">Setup</a>
-                <a href="/docs/integration.html">Integrate</a>
+                <a href="/">Credentials</a>
                 <a href="/docs/attributes.html">Attributes</a>
-                <a href="/docs/ts11.html">TS11</a>
-                <a href="/docs/api.html">API</a>
-                <a href="/docs/badges.html">Badges</a>
-                <a href="/docs/support.html">Support</a>
+                <span class="nav-spacer"></span>
+                <a href="/docs/register.html">Docs</a>
                 <a href="/docs/about.html">About</a>
             </nav>
         </div>
@@ -32,7 +26,7 @@
     <main>
         <div class="container">
             <nav class="breadcrumb">
-                <a href="/">Home</a>
+                <a href="/">Credentials</a>
                 <span class="separator">/</span>
                 <span class="current">Setup Guide</span>
             </nav>
@@ -215,70 +209,3 @@ rulebookURI: https://example.com/rulebook</code></pre>
                             <pre><code># identity.schema-meta.yaml
 attestation_los: iso_18045_high    # Required
 binding_type: key                  # Required</code></pre>
-                            <p>See the <a href="/docs/register.html">Publish</a> page for the full
-                            list of required and optional fields.</p>
-                        </li>
-                        <li>
-                            <strong>Tag your repo</strong> with the <code>vctm</code> topic on GitHub.
-                            The registry discovers repos by topic. If your repo was already listed
-                            in <code>sources.yaml</code>, no action is needed.
-                        </li>
-                        <li>
-                            <strong>Wait for the next registry build</strong> (runs every 6 hours,
-                            or trigger manually via the
-                            <a href="https://github.com/sirosfoundation/registry.siros.org/actions">Actions tab</a>).
-                        </li>
-                    </ol>
-
-                    <h3>Old workflow (remove this)</h3>
-                    <pre><code># .github/workflows/publish-vctm.yml — DELETE THIS FILE
-name: Publish VCTM
-on:
-  push:
-    branches: [main]
-jobs:
-  publish:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: sirosfoundation/mtcvctm@v1
-        with:
-          input-dir: .
-          output-dir: output
-          base-url: https://credentials.example.com
-          vctm-branch: vctm</code></pre>
-
-                    <h3>New setup (nothing to add)</h3>
-                    <pre><code># No GitHub Action needed! Your repository should contain:
-my-credentials/
-├── README.md
-├── identity.md                  # Your existing Markdown credentials
-├── identity.schema-meta.yaml    # NEW: add for TS11 compliance
-├── diploma.md
-└── diploma.schema-meta.yaml     # NEW: add for TS11 compliance</code></pre>
-                    <p>
-                        If you were using pre-built <code>.vctm.json</code> files instead of
-                        Markdown, those continue to work — place them on your default branch
-                        alongside their <code>schema-meta.yaml</code> files.
-                    </p>
-                </section>
-
-                <section class="docs-section">
-                    <h2>Next Steps</h2>
-                    <ul>
-                        <li><a href="/docs/register.html">Publish</a> — register your repository with the registry</li>
-                        <li><a href="/docs/markdown-format.html">Markdown Format</a> — credential authoring reference</li>
-                        <li><a href="/docs/ts11.html">TS11</a> — ETSI TS11 compliance details</li>
-                        <li><a href="/docs/integration.html">Integration</a> — use the registry API programmatically</li>
-                    </ul>
-                </section>
-            </article>
-        </div>
-    </main>
-    <footer class="site-footer">
-        <div class="container">
-            <p>&copy; 2026 SIROS Foundation. All rights reserved.</p>
-        </div>
-    </footer>
-</body>
-</html>
