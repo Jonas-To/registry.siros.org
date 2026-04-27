@@ -31,7 +31,9 @@
                 <span class="current">Integration</span>
             </nav>
 
-            <article class="docs-page">
+            <div class="docs-layout">
+            {{template "_sidebar.html" .}}
+            <article class="docs-page docs-content">
                 <h1>Integration Guide</h1>
                 <p class="lead">
                     Use the machine-readable registry API to automatically configure issuers,
@@ -313,6 +315,7 @@ for _, s := range registry.Data {
                     </ul>
                 </section>
             </article>
+            </div>
         </div>
     </main>
     <footer class="site-footer">

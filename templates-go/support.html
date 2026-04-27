@@ -31,7 +31,9 @@
                 <span class="current">Support &amp; Contributing</span>
             </nav>
 
-            <article class="docs-page">
+            <div class="docs-layout">
+            {{template "_sidebar.html" .}}
+            <article class="docs-page docs-content">
                 <h1>Support &amp; Contributing</h1>
                 <p class="lead">
                     Get help, report issues, and contribute to the SIROS Registry and mtcvctm projects.
@@ -205,6 +207,7 @@ registry-cli build --sources sources.yaml --templates templates-go --static stat
                     </ul>
                 </section>
             </article>
+            </div>
         </div>
     </main>
     <footer class="site-footer">

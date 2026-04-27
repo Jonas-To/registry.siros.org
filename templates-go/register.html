@@ -31,7 +31,9 @@
                 <span class="current">Add Your Repository</span>
             </nav>
 
-            <article class="docs-page">
+            <div class="docs-layout">
+            {{template "_sidebar.html" .}}
+            <article class="docs-page docs-content">
                 <h1>Publish Your Credentials</h1>
                 <p class="lead">
                     Add your credential definitions to the Registry. The registry discovers
@@ -157,6 +159,7 @@ trusted_authorities:                          # Trust framework references
                     </ul>
                 </section>
             </article>
+            </div>
         </div>
     </main>
     <footer class="site-footer">
