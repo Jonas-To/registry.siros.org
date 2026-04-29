@@ -43,7 +43,7 @@
                 <div class="vctm-grid">
                     {{range .Credentials}}
                     <a href="/{{.Org}}/{{.Slug}}/" class="vctm-card">
-                        <h3>{{if .VCTM}}{{.VCTM.Name}}{{else}}{{.Slug}}{{end}}</h3>
+                        <h3>{{if and .VCTM .VCTM.Name}}{{.VCTM.Name}}{{else}}{{.Slug}}{{end}}</h3>
                         {{if .VCTM}}{{if .VCTM.Description}}
                         <p class="vctm-description">{{.VCTM.Description}}</p>
                         {{end}}{{end}}
