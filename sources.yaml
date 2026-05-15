@@ -6,11 +6,8 @@
 # Auto-discovered repos use each repo's default branch.
 
 sources:
-  # Auto-discover all repos tagged "vctm" in the sirosfoundation org
-  - "github:topic/vctm?org=sirosfoundation"
-
-  # Auto-discover repos tagged "vctm" in the SUNET org
-  - "github:topic/vctm?org=SUNET"
+  # Auto-discover all repos tagged "vctm" across GitHub
+  - "github:topic/vctm"
 
   # Explicit entries (these repos keep credential data on the vctm branch)
   - url: "git:https://github.com/sirosfoundation/demo-credentials.git"
