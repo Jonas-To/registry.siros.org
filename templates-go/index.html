@@ -34,22 +34,24 @@
                     A distributed collection of credential metadata for SD-JWT VC, mDOC, and W3C VC ecosystems.
                     Built on GitHub and Markdown. Open to all.
                 </p>
-                <div class="stats">
-                    <div class="stat">
-                        <span class="stat-value">{{len .Orgs}}</span>
-                        <span class="stat-label">Organizations</span>
+                <div class="hero-stats-row">
+                    <div class="stats">
+                        <div class="stat">
+                            <span class="stat-value">{{len .Orgs}}</span>
+                            <span class="stat-label">Organizations</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-value">{{len .Credentials}}</span>
+                            <span class="stat-label">Credentials</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-value">{{.TS11Count}}</span>
+                            <span class="stat-label">TS11 Compliant</span>
+                        </div>
                     </div>
-                    <div class="stat">
-                        <span class="stat-value">{{len .Credentials}}</span>
-                        <span class="stat-label">Credentials</span>
+                    <div class="hero-actions">
+                        <a href="/docs/register.html" class="btn btn-primary btn-large">Publish Your Credentials</a>
                     </div>
-                    <div class="stat">
-                        <span class="stat-value">{{.TS11Count}}</span>
-                        <span class="stat-label">TS11 Compliant</span>
-                    </div>
-                </div>
-                <div class="hero-actions">
-                    <a href="/docs/register.html" class="btn btn-primary btn-large">Publish Your Credentials</a>
                 </div>
             </div>
         </section>
