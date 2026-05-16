@@ -25,9 +25,11 @@
         </div>
     </header>
     <main>
-        <div class="container">
-            <section class="hero">
-                <h1>Credential Type Registry</h1>
+        <section class="hero">
+            <img src="/static/images/hero-bg.jpg" alt="" class="hero-bg" />
+            <div class="hero-overlay"></div>
+            <div class="hero-content">
+                <h1><span class="hero-title-accent">Credential Type</span> <span class="hero-title-dark">Registry</span></h1>
                 <p class="hero-subtitle">
                     A distributed collection of credential metadata for SD-JWT VC, mDOC, and W3C VC ecosystems.
                     Built on GitHub and Markdown. Open to all.
@@ -49,7 +51,9 @@
                 <div class="hero-actions">
                     <a href="/docs/register.html" class="btn btn-primary btn-large">Publish Your Credentials</a>
                 </div>
-            </section>
+            </div>
+        </section>
+        <div class="container">
 
             <section class="org-list">
                 <h2>Organizations</h2>
@@ -113,5 +117,18 @@
         </div>
         <div class=container><p class=build-info>Generated {{.BuildTime}} using <a href="https://github.com/sirosfoundation/registry-cli">registry-cli</a></p></div>
     </footer>
+    <script>
+    (function() {
+        var header = document.querySelector('.site-header');
+        if (!header) return;
+        window.addEventListener('scroll', function() {
+            if (window.scrollY > 20) {
+                header.classList.add('site-header--scrolled');
+            } else {
+                header.classList.remove('site-header--scrolled');
+            }
+        }, { passive: true });
+    })();
+    </script>
 </body>
 </html>
