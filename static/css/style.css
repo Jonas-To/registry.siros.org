@@ -213,6 +213,13 @@ main {
     font-weight: 300;
 }
 
+.hero-stats-row {
+    display: flex;
+    align-items: center;
+    gap: 3rem;
+    flex-wrap: wrap;
+}
+
 .stats {
     display: flex;
     justify-content: flex-start;
@@ -220,7 +227,7 @@ main {
 }
 
 .hero-actions {
-    margin-top: 2rem;
+    margin-top: 0;
 }
 
 .btn-large {
