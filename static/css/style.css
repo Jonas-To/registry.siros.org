@@ -151,8 +151,6 @@ main {
     min-height: 55vh;
     display: flex;
     align-items: center;
-    justify-content: center;
-    text-align: center;
     padding: 6rem 0 3rem;
     margin-bottom: 2rem;
     overflow: hidden;
@@ -211,13 +209,13 @@ main {
     line-height: 1.6;
     color: hsl(220, 30%, 10%, 0.9);
     max-width: 600px;
-    margin: 0 auto 2rem;
+    margin: 0 0 2rem;
     font-weight: 300;
 }
 
 .stats {
     display: flex;
-    justify-content: center;
+    justify-content: flex-start;
     gap: 3rem;
 }
 
