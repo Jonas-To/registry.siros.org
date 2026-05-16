@@ -875,6 +875,13 @@ pre code {
     color: var(--color-text);
     margin: 0;
 }
+.footer-org a {
+    color: inherit;
+    text-decoration: none;
+}
+.footer-org a:hover {
+    color: var(--color-primary);
+}
 .footer-nav {
     display: flex;
     flex-wrap: wrap;
