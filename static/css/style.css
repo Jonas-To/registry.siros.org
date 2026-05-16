@@ -46,7 +46,7 @@ a:hover {
 
 /* Container */
 .container {
-    max-width: 1200px;
+    max-width: 1140px;
     margin: 0 auto;
     padding: 0 1.5rem;
 }
@@ -86,8 +86,9 @@ a:hover {
 }
 
 .logo-subtitle {
-    font-size: 1rem;
-    color: var(--color-text-muted);
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--color-primary);
 }
 
 .main-nav {
@@ -101,8 +102,9 @@ a:hover {
 }
 
 .main-nav a {
-    color: var(--color-text);
+    color: var(--color-text-muted);
     font-weight: 500;
+    font-size: 0.875rem;
 }
 
 .main-nav a:hover {
