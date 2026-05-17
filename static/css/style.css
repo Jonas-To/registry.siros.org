@@ -220,6 +220,19 @@ main {
     flex-wrap: wrap;
 }
 
+.hero-secondary-link {
+    margin-top: 1.5rem;
+    font-size: 1rem;
+}
+.hero-secondary-link a {
+    color: var(--color-primary);
+    font-weight: 500;
+    text-decoration: none;
+}
+.hero-secondary-link a:hover {
+    text-decoration: underline;
+}
+
 .stats {
     display: flex;
     justify-content: flex-start;
