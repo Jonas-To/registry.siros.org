@@ -1,109 +1,50 @@
-# Publishing VCTM Files
+# Publishing Credential Metadata
 
-> **Note:** When using the [SIROS Credential Type Registry](https://registry.siros.org),
-> credential conversion from Markdown to metadata JSON is handled automatically by
-> `registry-cli` using the embedded mtcvctm library. You do not need to run mtcvctm
-> separately. This page documents the standalone mtcvctm CLI for use outside the registry.
+`registry-cli` handles all credential metadata conversion and publishing as part of the centralized registry build pipeline. There is no need to run a separate tool or GitHub Action on individual repositories.
 
-mtcvctm supports two workflows for publishing credential metadata:
+## How It Works
 
-1. **Markdown-based** - Author credentials in markdown, auto-convert to VCTM
-2. **Raw JSON** - Publish existing VCTM JSON files directly
+When `registry-cli build` processes a source repository, it:
 
-## Raw VCTM Publication
+1. Clones the repository (main branch)
+2. Scans for Markdown files with `vct:` YAML front matter
+3. Converts them to credential metadata in all supported formats (`.vctm.json`, `.mdoc.json`, `.vc.json`)
+4. Detects `schema-meta.yaml` files for TS11 compliance metadata
+5. Aggregates everything into the registry site in a single sweep
 
-Use `publish-vctm` when you have existing VCTM JSON files that you want to publish without going through the markdown workflow.
+## Two Ways to Provide Credential Metadata
 
-### File Patterns
+### 1. Markdown authoring (recommended)
 
-The command looks for files matching:
-- `*.vctm.json`
-- `vctm_*.json`
-- `vctm-*.json`
+Write credential definitions as Markdown with YAML front matter. `registry-cli` converts them automatically during the build:
 
-### Basic Usage
+```markdown
+---
+vct: https://example.com/credentials/my-credential
+background_color: "#003366"
+text_color: "#FFFFFF"
+---
 
-```bash
-# Publish raw VCTM files
-mtcvctm publish-vctm --input ./vctm-files --output ./vctm
+# My Credential
 
-# With image inlining
-mtcvctm publish-vctm --input ./vctm-files --output ./vctm --inline-images
+A description of the credential.
 
-# In GitHub Action mode
-mtcvctm publish-vctm --github-action --vctm-branch vctm
+## Claims
+
+- `given_name` (string): Given name [mandatory]
+- `family_name` (string): Family name [mandatory]
+- `email` (string): Email address
 ```
 
-### Command Options
+See [Markdown Format](../docs/markdown-format.html) for the full authoring guide.
 
-| Option | Description |
-|--------|-------------|
-| `--input, -i` | Input directory containing VCTM JSON files |
-| `--output, -o` | Output directory for VCTM files |
-| `--github-action` | Run in GitHub Action mode |
-| `--vctm-branch` | Branch name for VCTM files (default: `vctm`) |
-| `--fetch-images` | Fetch network images and store locally |
-| `--inline-images` | Inline images as data:image URLs |
-| `--base-url` | Base URL for rewriting image paths |
-| `--no-normalize` | Skip normalization rules |
-| `--disable-rules` | Comma-separated list of rules to disable |
-| `--verbose-rules` | Show which normalization rules were applied |
+### 2. Pre-built metadata files
 
-### Example Workflow
-
-```yaml
-name: Publish VCTM
-
-on:
-  push:
-    branches: [main]
-    paths:
-      - 'vctm/**/*.json'
-
-jobs:
-  publish:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      
-      - name: Install mtcvctm
-        run: go install github.com/sirosfoundation/mtcvctm/cmd/mtcvctm@latest
-      
-      - name: Publish VCTM files
-        run: |
-          mtcvctm publish-vctm \
-            --input ./vctm \
-            --output ./dist \
-            --github-action \
-            --vctm-branch vctm
-```
+Place `.vctm.json`, `.mdoc.json`, `.vc.json` files directly in the repository. These are used as-is without conversion.
 
 ## Normalization
 
-Both `publish-vctm` and `batch` commands support normalization rules that fix legacy field names and add missing required fields.
-
-### Why Normalize?
-
-VCTM specifications evolve. Normalization ensures your VCTM files:
-
-- Use current field names (`locale` instead of legacy `lang`)
-- Have required fields (`display.locale`, `display.name`)
-- Don't contain empty optional fields (`properties: {}`)
-
-### Enabling Normalization
-
-```bash
-# With batch command
-mtcvctm batch --input ./credentials --output ./vctm --normalize
-
-# With publish-vctm (applies by default, disable with --no-normalize)
-mtcvctm publish-vctm --input ./vctm-files --output ./vctm
-
-# Normalize a single file
-mtcvctm normalize credential.vctm.json
-```
-
-### Available Rules
+`registry-cli` applies normalization rules during conversion to ensure credential metadata conforms to the latest specification:
 
 | Rule | Description |
 |------|-------------|
@@ -113,28 +54,3 @@ mtcvctm normalize credential.vctm.json
 | `set-display-name-from-root` | Copy `name` to display entries |
 | `remove-empty-svg-template-properties` | Clean up empty `properties` |
 | `remove-empty-description` | Remove empty descriptions |
-
-### Preview Changes
-
-Use `--dry-run` to see what would change:
-
-```bash
-mtcvctm normalize --dry-run -v credential.vctm.json
-```
-
-Output:
-```
-Applied rules: ensure-display-array, rename-lang-to-locale, set-display-name-from-root
-
-Normalized output (dry run):
-{
-  "vct": "https://example.com/test",
-  "name": "Test Credential",
-  "display": [
-    {
-      "locale": "en-US",
-      "name": "Test Credential"
-    }
-  ]
-}
-```
