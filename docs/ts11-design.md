@@ -27,7 +27,7 @@ Evolve registry.siros.org from a VCTM-only registry into a TS11-compliant **Cata
 | P3 | **Static-first** | All API responses are pre-built as static files. A CDN or GitHub Pages serves them directly. |
 | P4 | **VCTM as schema content** | Existing VCTM/mDOC/W3C VC files are the format-specific data schemas. `SchemaMeta` is a governance envelope that references them. |
 | P5 | **Incremental adoption** | The existing VCTM registry URLs and site continue to work. TS11 endpoints are additive. |
-| P6 | **Go toolchain** | The build pipeline and signing tool are implemented in Go, aligning with the broader SIROS toolchain (g119612, mtcvctm, trust-lists, go-cryptoutil). |
+| P6 | **Go toolchain** | The build pipeline and signing tool are implemented in Go, aligning with the broader SIROS toolchain (g119612, registry-cli, trust-lists, go-cryptoutil). |
 
 ## 3. Data Model Mapping
 
@@ -258,7 +258,7 @@ attestation_los: iso_18045_high
 binding_type: key
 ```
 
-All other `SchemaMeta` fields are inferred at build time (see §3.1). The mtcvctm tool can be extended to:
+All other `SchemaMeta` fields are inferred at build time (see §3.1). The registry-cli tool can be extended to:
 
 1. **Validate** `schema-meta.yaml` against the TS11 JSON schema at publish time
 2. **Scaffold** a minimal `schema-meta.yaml` from an existing VCTM file
@@ -345,7 +345,7 @@ The existing credential detail pages (`/<org>/<slug>.html`) gain a new section/t
 - Port `build.js` discovery and fetching logic to Go, driven by `sources.yaml`
 - Ship default Go html/template files with the tool
 - Add `schema-meta.yaml` and `rulebook.md` files to `sirosfoundation/demo-credentials` and `SUNET/vc` repos
-- Extend mtcvctm with `schema-meta.yaml` validation and scaffolding
+- Extend registry-cli with `schema-meta.yaml` validation and scaffolding
 
 ### Phase 2: Build pipeline and signing
 - Implement SchemaMeta inference, UUID generation, and TS11 JSON schema validation in `registry-cli build`
@@ -498,7 +498,7 @@ The current Node.js builder (`scripts/build.js`, ~750 lines) handles discovery, 
 
 Maintaining this as a hybrid Node.js + Go pipeline (Node.js for site generation, Go for signing) introduces unnecessary integration complexity. Migrating to a pure Go toolchain:
 
-- **Aligns with the SIROS ecosystem** — g119612, mtcvctm, go-trust, go-cryptoutil, go-wallet-backend are all Go
+- **Aligns with the SIROS ecosystem** — g119612, registry-cli, go-trust, go-cryptoutil, go-wallet-backend are all Go
 - **Single build artifact** — one statically-linked binary per tool, no `node_modules`
 - **Unified crypto stack** — PKCS#11 signing reuses `ThalesGroup/crypto11` and `go-cryptoutil` directly
 - **Simpler CI/CD** — `go install` in GitHub Actions, no Node.js setup step

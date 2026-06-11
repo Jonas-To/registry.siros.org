@@ -11,7 +11,7 @@ The registry site is built by [registry-cli](https://github.com/sirosfoundation/
 1. **Source Resolution** — `sources.yaml` declares repositories via GitHub topic autodiscovery (`github:topic/vctm?org=...`) and explicit git URLs (`git:https://...`)
 2. **Repository Cloning** — Each source repository is cloned (shallow, default branch from `sources.yaml`)
 3. **Credential Detection** — The tool scans for `schema-meta.yaml`, `.vctm.json`, `.mdoc.json`, `.vc.json` files and Markdown files with `vct:` front matter
-4. **Markdown Conversion** — Markdown credential files are converted to metadata JSON using the embedded [mtcvctm](https://github.com/sirosfoundation/mtcvctm) library (no external binary required)
+4. **Markdown Conversion** — Markdown credential files are converted to metadata JSON by registry-cli's built-in credential conversion library (no external binary required)
 5. **TS11 Validation** — Each credential is validated against the TS11 JSON Schema; only compliant schemas appear in the API
 6. **Site Generation** — HTML pages, API payloads (`/api/v1/schemas.json`), OpenAPI spec, and DCAT-AP catalogue are generated
 7. **Deployment** — GitHub Actions deploys the built site to GitHub Pages every 6 hours
@@ -42,7 +42,7 @@ Each credential is assigned a deterministic UUID v5 identifier derived from `org
 Repositories can provide credential metadata in two ways:
 
 1. **Pre-built metadata files** — Place `.vctm.json`, `.mdoc.json`, `.vc.json` files directly in the repository alongside a `schema-meta.yaml` for TS11 compliance
-2. **Markdown authoring** — Write credential definitions as Markdown with `vct:` YAML front matter; registry-cli converts them automatically using the embedded mtcvctm library
+2. **Markdown authoring** — Write credential definitions as Markdown with `vct:` YAML front matter; registry-cli converts them automatically
 
 See [Markdown Format](../docs/markdown-format.html) for the credential authoring format.
 

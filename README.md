@@ -8,7 +8,7 @@ This project builds and deploys the static site at `https://registry.siros.org`.
 
 - **Discovers** credential repositories via `sources.yaml` (GitHub topic search and explicit git URLs)
 - **Clones** each repository and detects credential definitions (`.vctm.json`, `.mdoc.json`, `.vc.json`, `schema-meta.yaml`)
-- **Converts** Markdown credential definitions to metadata using the embedded [mtcvctm](https://github.com/sirosfoundation/mtcvctm) library
+- **Converts** Markdown credential definitions to metadata using the built-in credential conversion library
 - **Validates** credentials against the TS11 JSON Schema
 - **Generates** a static HTML site, TS11-compliant API (`/api/v1/schemas.json`), and DCAT-AP catalogue
 - **Signs** API responses with JWS (PKCS#11) when configured
@@ -29,7 +29,7 @@ For each repository, registry-cli looks for:
 
 - **`schema-meta.yaml`** files — TS11 SchemaMeta envelopes declaring attestation level of security, binding type, and rulebook
 - **`.vctm.json`** / **`.mdoc.json`** / **`.vc.json`** files — credential metadata in SD-JWT VC, mso_mdoc, and W3C VC formats
-- **Markdown credential files** with `vct:` front matter — automatically converted to metadata using the embedded mtcvctm library (no external tool needed)
+- **Markdown credential files** with `vct:` front matter — automatically converted to metadata by registry-cli (no external tool needed)
 
 ## URL Structure
 
